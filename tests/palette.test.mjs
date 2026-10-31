@@ -25,7 +25,7 @@ function raster(width, height, pixel) {
 }
 
 test('selector exposes exactly the six supported methods with accurate names', () => {
-  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const html = readFileSync(new URL('../src/modules/sidebar/view.html', import.meta.url), 'utf8');
   const select = html.match(/<select id="method">([\s\S]*?)<\/select>/)[1];
   const options = [...select.matchAll(/<option value="([^"]+)">([^<]+)<\/option>/g)];
   assert.deepEqual(options.map((m) => m[1]).sort(), [...methods].sort());

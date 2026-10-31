@@ -46,6 +46,8 @@ Then reload **http://127.0.0.1:8080/**. The command attempts the 20 pinned artwo
 
 The browser suite uses installed Google Chrome and starts Vite on port 8081. It blocks external requests so results do not depend on Wikimedia availability. Run it with `npm run test:browser`; successful responsive tests save screenshots in `test-results/`. Browser checks verify computed text/background contrast (at least 4.5:1), five-color UI palettes, monochrome fallback, and layouts from 320px to 1440px.
 
+See [module ownership and public contracts](docs/MODULE_ARCHITECTURE.md) for the current UI boundaries and migration status.
+
 ## Where the files are
 
 ```text
@@ -61,7 +63,10 @@ src/
   artwork-selection.ts         # Shared artwork selection type
   artwork-sources.ts           # Featured artwork lookup cache
   image-selection.ts           # Async selection, cancellation, pixels and URL cleanup
-  app-ui.ts                    # UI state, rendering, search and event handlers
+  app/                         # Shell contracts and workflow orchestration
+  modules/sidebar/             # Encapsulated gallery and palette controls
+  modules/wikimedia-search/     # Encapsulated search dialog and requests
+  app-ui.ts                    # Compatibility adapter for the shell
   templates/                   # Original reference template markup and scoped styles
     index.ts                   # Mounts bundled templates and initializes icons
     shared.css                 # Reference theme helpers and contextual contrast guards
