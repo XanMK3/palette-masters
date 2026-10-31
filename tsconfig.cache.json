@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".cache/art"
+  },
+  "include": ["src/featured-images.ts"]
+}

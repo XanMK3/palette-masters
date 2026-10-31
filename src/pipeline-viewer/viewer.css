@@ -1,0 +1,311 @@
+.pipeline-viewer {
+  color-scheme: dark;
+  width: min(1040px, 96vw);
+  max-width: 96vw;
+  max-height: 96dvh;
+  margin: auto;
+  padding: 18px 22px;
+  border: 1px solid #475548;
+  border-radius: 16px;
+  background: #121917;
+  color: #eaece7;
+  box-shadow: 0 24px 100px #0005;
+}
+.pipeline-viewer::backdrop {
+  background: #111c;
+}
+.pipeline-viewer [hidden] {
+  display: none !important;
+}
+.pipeline-viewer header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pipeline-viewer h2 {
+  font-size: 20px;
+  margin: 0;
+  flex: 1;
+}
+.pipeline-viewer button {
+  cursor: pointer;
+  border: 1px solid #475548;
+  border-radius: 7px;
+  background: #27342b;
+  color: #eaece7;
+  padding: 7px 12px;
+  font-size: 13px;
+}
+.pipeline-viewer button:focus-visible,
+.pipeline-viewer input:focus-visible,
+.pipeline-viewer select:focus-visible {
+  outline: 3px solid #edc48e;
+  outline-offset: 3px;
+}
+.pipeline-viewer button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pipeline-viewer nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+  gap: 3px;
+  margin: 0;
+}
+.pipeline-viewer nav button {
+  border: 0;
+  background: transparent;
+}
+.pipeline-viewer button[aria-current='true'] {
+  background: #455348;
+  color: white;
+}
+.pv-duration,
+.pv-hint {
+  font-size: 12px;
+  color: #57534e;
+}
+.pv-painting {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #101514;
+  border-radius: 10px;
+  overflow: hidden;
+  height: min(52dvh, 470px);
+}
+.pv-painting > canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pv-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #000a;
+  color: white;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.pv-caption {
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.35;
+  min-height: 22px;
+  margin: 12px 0 8px;
+}
+.pv-swatches {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 5px 3px;
+  min-height: 42px;
+}
+.pipeline-viewer .pv-swatch {
+  min-width: 24px;
+  flex: 1;
+  height: 35px;
+  border: 1px solid #0003;
+  padding: 0;
+  position: relative;
+}
+.pv-swatch[aria-pressed='true'] {
+  outline: 3px solid #edc48e;
+  outline-offset: 2px;
+}
+.pv-swatch span {
+  font-size: 10px;
+  color: #fff;
+  background: #000b;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.pv-rejected {
+  opacity: 0.2;
+  transform: scale(0.75);
+}
+.pv-color-strip {
+  width: 100%;
+  height: 32px;
+}
+.pv-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 5px;
+  flex-wrap: wrap;
+}
+.pv-controls input {
+  flex: 1;
+  min-width: 80px;
+}
+.pv-controls output {
+  font-size: 11px;
+  min-width: 45px;
+}
+.pv-controls button[aria-pressed='true'] {
+  background: #455348;
+  color: white;
+}
+.pv-hint {
+  display: block;
+  text-align: center;
+}
+.pv-roles {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.pv-roles button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.pv-roles span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #0003;
+}
+.pv-theme-card {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 260px;
+  max-width: calc(100% - 32px);
+  box-sizing: border-box;
+  padding: 15px;
+  border: 1px solid #ffffff60;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px #0006;
+  font-size: 14px;
+}
+@media (max-width: 650px) {
+  .pipeline-viewer {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 100dvh;
+    border-radius: 0;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+  .pv-painting {
+    height: 43dvh;
+  }
+  .pipeline-viewer h2 {
+    font-size: 18px;
+  }
+  .pv-controls {
+    gap: 5px;
+  }
+  .pv-controls button {
+    padding: 7px 9px;
+  }
+  .pv-roles button {
+    font-size: 11px;
+  }
+}
+
+.pipeline-viewer header {
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.pipeline-viewer .pv-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+.pipeline-viewer nav > span {
+  color: #b7c1b7;
+  font-size: 12px;
+}
+.pv-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  margin: 8px 0;
+}
+.pv-selection select {
+  border: 1px solid #475548;
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: #27342b;
+  color: #eaece7;
+}
+.pv-theme-card .pv-roles {
+  gap: 4px 8px;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+.pv-theme-card .pv-roles button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 10px;
+  gap: 4px;
+}
+.pv-theme-card .pv-roles span {
+  width: 9px;
+  height: 9px;
+}
+.pipeline-viewer .advanced-pipeline {
+  margin-top: 16px;
+  border-top: 1px solid #475548;
+  padding-top: 12px;
+}
+@media (max-width: 650px) {
+  .pipeline-viewer nav button {
+    padding: 6px;
+    font-size: 12px;
+  }
+  .pipeline-viewer header {
+    gap: 6px;
+  }
+  .pipeline-viewer .pipeline-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.pv-step-description {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  font-size: 16px;
+  line-height: 1.35;
+  margin: 12px 0 8px;
+}
+.pv-step-description .pv-caption,
+.pv-step-description .pv-selection {
+  margin: 0;
+  font: inherit;
+}
+.pv-step-description .pv-selection select {
+  font: inherit;
+}
+
+.pipeline-viewer .pipeline-fields input,
+.pipeline-viewer .pipeline-fields select {
+  background: #27342b;
+  color: #eaece7;
+  border-color: #475548;
+}
+.pipeline-viewer input[type='range'] {
+  accent-color: #d1a87a;
+}

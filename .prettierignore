@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.cache/
+references/
+package-lock.json
+assets-report.json
+src/embedded-art.ts

@@ -1,0 +1,78 @@
+/* Base defaults must sit below Tailwind v4 utilities in the cascade. */
+@layer base {
+  .theme-stage {
+    width: 100%;
+    margin: 0 auto;
+    container-type: inline-size;
+  }
+  .theme-stage .template-view {
+    margin-inline: auto;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+  .theme-stage :is(h1, h2, h3, h4, p, blockquote) {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  .theme-stage :is(button, a) {
+    color: inherit;
+  }
+  .theme-stage button {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .theme-stage a {
+    text-decoration: inherit;
+  }
+  .theme-stage :is(svg, img) {
+    display: block;
+    vertical-align: middle;
+  }
+  .theme-stage *,
+  .theme-stage ::before,
+  .theme-stage ::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
+  }
+}
+.theme-stage .font-serif-custom {
+  font-family: 'Playfair Display', serif;
+}
+.theme-stage .font-mono-custom {
+  font-family: 'Space Grotesk', monospace;
+}
+.theme-stage button:hover {
+  text-decoration: underline;
+}
+.theme-stage :is(a, button):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+/* The poster displays the same uncropped image used for extraction. */
+.theme-stage .poster-artwork {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 180px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.theme-stage .poster-artwork img {
+  object-fit: contain;
+}
+
+/* The original text-role pigment remains visible in the picture frame even
+   when contextual foregrounds need contrast correction. */
+.theme-stage .poster-heading > div {
+  min-width: 0;
+}
+@container (max-width: 440px) {
+  .theme-stage #tpl-poster {
+    padding: 20px;
+  }
+  .theme-stage #tpl-poster .bg-surface {
+    padding: 16px;
+  }
+}

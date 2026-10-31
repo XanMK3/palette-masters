@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-30",
+  "node": "v24.21.0",
+  "platform": "darwin arm64",
+  "cpu": "Apple M1 Pro",
+  "width": 192,
+  "height": 128,
+  "runsPerCase": 3,
+  "notes": "Synthetic raster; three-run median and maximum, not p95. Post-GC retained heap estimate, not peak memory. Extraction and theme results only.",
+  "records": [
+    {
+      "method": "hue-auto",
+      "count": 5,
+      "medianMs": 29.02,
+      "maximumMs": 44.89,
+      "serializedResultBytes": 2329961,
+      "retainedHeapDeltaBytes": 2853136
+    },
+    {
+      "method": "hue-auto",
+      "count": 6,
+      "medianMs": 29.34,
+      "maximumMs": 37.3,
+      "serializedResultBytes": 2330538,
+      "retainedHeapDeltaBytes": 264416
+    },
+    {
+      "method": "oklab-kmeans-auto",
+      "count": 5,
+      "medianMs": 193.45,
+      "maximumMs": 272.69,
+      "serializedResultBytes": 2452962,
+      "retainedHeapDeltaBytes": 1398416
+    },
+    {
+      "method": "oklab-kmeans-auto",
+      "count": 6,
+      "medianMs": 226.38,
+      "maximumMs": 581.54,
+      "serializedResultBytes": 2458660,
+      "retainedHeapDeltaBytes": 169504
+    },
+    {
+      "method": "octree-auto",
+      "count": 5,
+      "medianMs": 241.16,
+      "maximumMs": 373.39,
+      "serializedResultBytes": 2295958,
+      "retainedHeapDeltaBytes": 236616
+    },
+    {
+      "method": "octree-auto",
+      "count": 6,
+      "medianMs": 179.04,
+      "maximumMs": 444.52,
+      "serializedResultBytes": 2296547,
+      "retainedHeapDeltaBytes": 260296
+    },
+    {
+      "method": "slic-samples-farthest",
+      "count": 5,
+      "medianMs": 153.68,
+      "maximumMs": 430.24,
+      "serializedResultBytes": 4015922,
+      "retainedHeapDeltaBytes": 4382656
+    },
+    {
+      "method": "slic-samples-farthest",
+      "count": 6,
+      "medianMs": 113.45,
+      "maximumMs": 207.06,
+      "serializedResultBytes": 4017763,
+      "retainedHeapDeltaBytes": 3226592
+    },
+    {
+      "method": "medoids-dominance",
+      "count": 5,
+      "medianMs": 247.85,
+      "maximumMs": 557,
+      "serializedResultBytes": 2295851,
+      "retainedHeapDeltaBytes": 252872
+    },
+    {
+      "method": "medoids-dominance",
+      "count": 6,
+      "medianMs": 206.48,
+      "maximumMs": 214.73,
+      "serializedResultBytes": 2301026,
+      "retainedHeapDeltaBytes": 220040
+    },
+    {
+      "method": "edge-medoids-farthest",
+      "count": 5,
+      "medianMs": 142.14,
+      "maximumMs": 146.47,
+      "serializedResultBytes": 2354195,
+      "retainedHeapDeltaBytes": 308072
+    },
+    {
+      "method": "edge-medoids-farthest",
+      "count": 6,
+      "medianMs": 119.04,
+      "maximumMs": 126.32,
+      "serializedResultBytes": 2359946,
+      "retainedHeapDeltaBytes": 271208
+    }
+  ]
+}

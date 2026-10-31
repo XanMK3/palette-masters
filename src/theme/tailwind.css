@@ -1,0 +1,35 @@
+/* Public Tailwind color contract. Runtime values are supplied by the palette mapper. */
+@theme inline {
+  --color-canvas: var(--art-bg);
+  --color-on-canvas: var(--art-bg-text-contrast);
+  --color-on-canvas-muted: var(--art-bg-text-muted);
+  --color-accent-on-canvas: var(--art-accent-on-bg);
+  --color-secondary-on-canvas: var(--art-secondary-on-bg);
+  --color-tertiary-on-canvas: var(--art-tertiary-on-bg);
+  --color-surface: var(--art-surface);
+  --color-on-surface: var(--art-surface-text-contrast);
+  --color-on-surface-muted: var(--art-surface-text-muted);
+  --color-accent-on-surface: var(--art-accent-on-surface);
+  --color-secondary-on-surface: var(--art-secondary-on-surface);
+  --color-tertiary-on-surface: var(--art-tertiary-on-surface);
+  --color-accent: var(--art-accent);
+  --color-on-accent: var(--art-accent-text-contrast);
+  --color-on-accent-muted: var(--art-accent-text-muted);
+  --color-accent-on-accent: var(--art-accent-on-accent);
+  --color-secondary-on-accent: var(--art-secondary-on-accent);
+  --color-tertiary-on-accent: var(--art-tertiary-on-accent);
+  --color-secondary: var(--art-secondary);
+  --color-on-secondary: var(--art-secondary-text-contrast);
+  --color-on-secondary-muted: var(--art-secondary-text-muted);
+  --color-accent-on-secondary: var(--art-accent-on-secondary);
+  --color-secondary-on-secondary: var(--art-secondary-on-secondary);
+  --color-tertiary-on-secondary: var(--art-tertiary-on-secondary);
+  --color-tertiary: var(--art-tertiary);
+  --color-on-tertiary: var(--art-tertiary-text-contrast);
+  --color-on-tertiary-muted: var(--art-tertiary-text-muted);
+  --color-accent-on-tertiary: var(--art-accent-on-tertiary);
+  --color-secondary-on-tertiary: var(--art-secondary-on-tertiary);
+  --color-tertiary-on-tertiary: var(--art-tertiary-on-tertiary);
+  /* Original text pigment, suitable for decorative details; use on-* for readable text. */
+  --color-pigment: var(--art-text);
+}

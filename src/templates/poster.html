@@ -1,0 +1,53 @@
+<div
+  id="tpl-poster"
+  class="template-view hidden w-full max-w-2xl bg-canvas text-on-canvas rounded-2xl border-4 border-accent shadow-2xl p-8 md:p-12 relative overflow-hidden"
+>
+  <div class="relative z-10 flex flex-col h-full justify-between space-y-8">
+    <div
+      class="poster-heading bg-accent text-on-accent flex justify-between items-center gap-3 rounded-lg px-4 py-3"
+    >
+      <div>
+        <p class="font-mono-custom text-[9px] font-bold uppercase tracking-widest">
+          Wikimedia Exhibition
+        </p>
+        <h2 class="text-base font-bold font-mono-custom tracking-tight">Studies in Color</h2>
+      </div>
+      <div class="text-right shrink-0">
+        <span class="text-sm font-bold font-mono-custom">2026</span>
+        <p class="text-[9px] font-mono-custom uppercase tracking-wide">Art &amp; color</p>
+      </div>
+    </div>
+
+    <div
+      class="p-8 bg-surface text-on-surface rounded-xl border-2 border-white/20 relative flex flex-col items-center justify-center text-center space-y-4"
+    >
+      <div
+        id="poster-artwork"
+        class="poster-artwork bg-canvas border-8 border-pigment"
+        aria-label="Selected artwork"
+      ></div>
+      <h3 id="poster-art-name" class="font-mono-custom text-2xl font-bold uppercase tracking-tight">
+        STARRY NIGHT
+      </h3>
+      <p
+        id="poster-art-artist"
+        class="text-xs font-mono-custom text-on-surface-muted uppercase tracking-widest"
+      >
+        VINCENT VAN GOGH (1889)
+      </p>
+
+      <div
+        class="poster-info bg-secondary text-on-secondary grid grid-cols-2 gap-4 rounded-xl p-5 font-mono-custom text-xs"
+      >
+        <div>
+          <p class="font-bold uppercase">Data Stream</p>
+          <p class="text-on-secondary-muted">Wikimedia Commons API</p>
+        </div>
+        <div class="text-right">
+          <p class="font-bold uppercase">Quantization</p>
+          <p id="poster-algorithm-tag" class="text-on-secondary-muted">Hue Bucket + Oklab</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

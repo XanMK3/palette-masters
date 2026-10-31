@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.cache/
+assets-report.json
+.DS_Store
+test-results/
+playwright-report/
