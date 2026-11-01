@@ -11,8 +11,8 @@
     "cache:art": "tsc -p tsconfig.cache.json && node scripts/cache-featured.mjs && npm run build",
     "dev": "vite",
     "preview": "vite preview",
-    "format": "prettier --write \"src/**/*.{ts,html,css}\" \"scripts/**/*.mjs\" index.html vite.config.ts package.json \"tsconfig*.json\" .prettierrc.json \"tests/**/*.mjs\" playwright.config.mjs",
-    "format:check": "prettier --check \"src/**/*.{ts,html,css}\" \"scripts/**/*.mjs\" index.html vite.config.ts package.json \"tsconfig*.json\" .prettierrc.json \"tests/**/*.mjs\" playwright.config.mjs",
+    "format": "prettier --write \"src/**/*.{ts,tsx,html,css}\" \"scripts/**/*.mjs\" index.html vite.config.ts package.json \"tsconfig*.json\" .prettierrc.json \"tests/**/*.mjs\" playwright.config.mjs",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,html,css}\" \"scripts/**/*.mjs\" index.html vite.config.ts package.json \"tsconfig*.json\" .prettierrc.json \"tests/**/*.mjs\" playwright.config.mjs",
     "test:browser": "playwright test",
     "benchmark:pipeline": "tsc --noEmit false --outDir .cache/tests && node --expose-gc scripts/benchmark-pipeline.mjs"
   },
@@ -31,6 +31,8 @@
     "@fontsource/inter": "^5.3.0",
     "@fontsource/playfair-display": "^5.3.0",
     "@fontsource/space-grotesk": "^5.3.0",
-    "lucide": "^1.63.0"
+    "@preact/signals": "^2.11.4",
+    "lucide": "^1.63.0",
+    "preact": "^11.1.1"
   }
 }

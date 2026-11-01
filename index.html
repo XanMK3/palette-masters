@@ -758,43 +758,7 @@
     </style>
   </head>
   <body>
-    <div class="shell">
-      <aside class="sidebar" id="sidebar"></aside>
-      <dialog id="searchDialog" aria-labelledby="searchTitle"></dialog>
-      <main class="workspace">
-        <div class="workspace-top">
-          <div>
-            <button class="btn" id="openSearch" type="button" aria-haspopup="dialog">
-              Search Wikimedia
-            </button>
-          </div>
-          <div class="preview-actions">
-            <button
-              class="btn"
-              id="download-theme"
-              type="button"
-              disabled
-              title="Export these colors for any Tailwind v4 project"
-            >
-              Download Tailwind v4 theme
-            </button>
-            <div class="template-tabs" role="tablist" aria-label="Preview template">
-              <button data-template="landing" class="active">SaaS landing</button
-              ><button data-template="magazine">Magazine article</button
-              ><button data-template="poster">Art poster</button>
-            </div>
-          </div>
-        </div>
-        <div class="stage-area">
-          <iframe
-            id="templatePreview"
-            class="preview-scroll"
-            src="./preview.html"
-            title="Template preview"
-          ></iframe>
-        </div>
-      </main>
-    </div>
+    <div class="shell"></div>
     <script type="module" src="/src/app.ts"></script>
   </body>
 </html>

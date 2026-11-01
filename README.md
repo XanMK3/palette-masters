@@ -63,7 +63,7 @@ src/
   artwork-selection.ts         # Shared artwork selection type
   artwork-sources.ts           # Featured artwork lookup cache
   image-selection.ts           # Async selection, cancellation, pixels and URL cleanup
-  app/                         # Shell contracts and workflow orchestration
+  app/                         # Preact shell, workflow controller and lifecycle adapters
   modules/sidebar/             # Encapsulated gallery and palette controls
   modules/wikimedia-search/     # Encapsulated search dialog and requests
   app-ui.ts                    # Compatibility adapter for the shell

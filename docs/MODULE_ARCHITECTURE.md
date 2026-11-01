@@ -1,7 +1,8 @@
 # Module boundaries
 
-The first two migration stages are implemented in plain TypeScript. Preact is a
-later implementation change behind these boundaries.
+Migration stages 1–3 are implemented. The shell uses Preact and a private Signals
+instance; sidebar and search remain plain TypeScript behind their public APIs.
+Their internal Preact conversion is the next stage.
 
 | Owner / public entry | State and responsibility | Contract |
 | --- | --- | --- |
@@ -18,6 +19,26 @@ and clear their contents. Each module can mount with fixture services and
 callbacks without the shell or its siblings. Shared presentation styles remain
 in `index.html` during this extraction; visual styling is not yet independently
 packaged. Existing IDs support one instance of each module per application.
+
+## Shell implementation
+
+`src/app/shell.tsx` renders the toolbar, template tabs, iframe element and empty
+sidebar/search host elements. Preact never renders children inside those module
+hosts or inside the iframe. A layout effect mounts the modules and connects the
+workflow before `createAppShell` returns, preserving synchronous image-selection
+callbacks. Stable references keep module instances alive across shell rerenders.
+
+`src/app/controller.ts` owns extraction and theme workflow state. It sends typed
+outputs through `ports.ts` rather than querying shell elements or changing their
+properties. The shell's private signal holds the selected template and export
+availability; it is created per mount, never shared as a global store.
+
+`src/app/pipeline-adapter.ts` manages the existing imperative viewer and advanced
+controls, including focus restoration and cleanup. The viewer's implementation
+remains independent of Preact. The existing preview bridge receives updates and
+owns iframe messaging. On unmount, the shell disposes the controller, all modules,
+the viewer adapter, and the bridge; subsequent callbacks on the old public shell
+handle are ignored.
 
 ## Data flow
 
@@ -64,3 +85,7 @@ state updates, cleanup/remounting, stale query responses, cancelled detail
 selection and successful selection through the public callback. Existing unit
 and browser suites cover extraction, themes, galleries, preview and viewer
 behavior across the complete application.
+
+`tests/browser/shell-lifecycle.spec.mjs` mounts the Preact shell with fixture
+services, supplies pixels immediately after mounting, checks stable module DOM
+through toolbar updates, opens the viewer, and verifies disposal and remounting.

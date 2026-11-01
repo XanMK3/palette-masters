@@ -7,6 +7,8 @@
  * File provenance and reuse terms are at FEATURED_FILE_PAGES.
  */
 export const FEATURED_IMAGE_FILENAMES: Readonly<Record<string, string>> = {
+  The_Third_of_May_1808: 'El tres de mayo de 1808 en Madrid.jpg',
+  The_Ambassadors: 'Holbein-ambassadorsFXD.jpg',
   "Hall_of_the_Bulls": "Lascaux painting.jpg",
   "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "Lascaux 01.jpg",
   "Panel_of_Horses": "Chauvet´s cave horses.jpg",
@@ -77,6 +79,10 @@ export const FEATURED_IMAGE_FILENAMES: Readonly<Record<string, string>> = {
 };
 
 export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
+  The_Third_of_May_1808:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/El_tres_de_mayo_de_1808_en_Madrid.jpg/960px-El_tres_de_mayo_de_1808_en_Madrid.jpg',
+  The_Ambassadors:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Holbein-ambassadorsFXD.jpg/960px-Holbein-ambassadorsFXD.jpg',
   "Hall_of_the_Bulls": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Lascaux_painting.jpg/960px-Lascaux_painting.jpg",
   "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "https://upload.wikimedia.org/wikipedia/commons/6/65/Lascaux_01.jpg",
   "Panel_of_Horses": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Chauvet%C2%B4s_cave_horses.jpg/960px-Chauvet%C2%B4s_cave_horses.jpg",
@@ -168,6 +174,10 @@ export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
 };
 
 export const FEATURED_FILE_PAGES: Readonly<Record<string, string>> = {
+  The_Third_of_May_1808:
+    'https://commons.wikimedia.org/wiki/File:El_tres_de_mayo_de_1808_en_Madrid.jpg',
+  The_Ambassadors:
+    'https://commons.wikimedia.org/wiki/File:Holbein-ambassadorsFXD.jpg',
   "Hall_of_the_Bulls": "https://commons.wikimedia.org/wiki/File:Lascaux_painting.jpg",
   "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "https://commons.wikimedia.org/wiki/File:Lascaux_01.jpg",
   "Panel_of_Horses": "https://commons.wikimedia.org/wiki/File:Chauvet%C2%B4s_cave_horses.jpg",
@@ -252,6 +262,10 @@ export const FEATURED_FILE_PAGES: Readonly<Record<string, string>> = {
 };
 
 export const FEATURED_UPLOAD_IMAGES: Readonly<Record<string, string>> = {
+  The_Third_of_May_1808:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/El_tres_de_mayo_de_1808_en_Madrid.jpg/960px-El_tres_de_mayo_de_1808_en_Madrid.jpg',
+  The_Ambassadors:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Holbein-ambassadorsFXD.jpg/960px-Holbein-ambassadorsFXD.jpg',
   "Hall_of_the_Bulls": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Lascaux_painting.jpg/960px-Lascaux_painting.jpg",
   "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "https://upload.wikimedia.org/wikipedia/commons/6/65/Lascaux_01.jpg",
   "Panel_of_Horses": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Chauvet%C2%B4s_cave_horses.jpg/960px-Chauvet%C2%B4s_cave_horses.jpg",
