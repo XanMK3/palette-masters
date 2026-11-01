@@ -76,3 +76,78 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
   await page.locator('.work').first().click();
   expect(await page.evaluate(() => window.fixture.selected.length)).toBe(1);
 });
+
+test('workflow instances keep state separate and ignore all intents after disposal', async ({
+  page,
+}) => {
+  await page.route('**/controller-fixture', (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><body></body>' }),
+  );
+  await page.goto('/controller-fixture');
+  const result = await page.evaluate(async () => {
+    const { createController } = await import('/src/app/controller.ts');
+    function fixture() {
+      const outputs = [];
+      let sidebar;
+      let shell;
+      const controller = createController(
+        {
+          updateSidebar: (state) => {
+            sidebar = state;
+            outputs.push('sidebar');
+          },
+          updateShell: (state) => {
+            shell = state;
+            outputs.push('shell');
+          },
+          preview: { update: () => outputs.push('preview') },
+          pipeline: {
+            chapter: 'sample',
+            isOpen: false,
+            preset: () => outputs.push('preset'),
+            open: () => outputs.push('viewer'),
+            dispose: () => outputs.push('close'),
+          },
+          download: () => outputs.push('download'),
+        },
+        { selectPainting: () => outputs.push('select') },
+      );
+      return {
+        controller,
+        outputs,
+        state: () => ({
+          method: sidebar.method,
+          template: shell.template,
+          canExport: shell.canExport,
+        }),
+      };
+    }
+    const first = fixture();
+    const second = fixture();
+    first.controller.sidebarActions.changeMethod('octree-auto', 'Octree');
+    first.controller.setTemplate('poster');
+    const separate = [first.state(), second.state()];
+    first.controller.dispose();
+    const before = first.outputs.length;
+    first.controller.setTemplate('landing');
+    first.controller.showImage(null, 'Late image');
+    first.controller.selectionStarted({ title: 'Late selection', artist: '' });
+    first.controller.pixelsReady(new ImageData(1, 1));
+    first.controller.sidebarActions.changeMethod('hue-auto', 'Hue');
+    first.controller.sidebarActions.selectPainting({ title: 'Late selection', artist: '' });
+    first.controller.sidebarActions.assignRole('accent', 0);
+    first.controller.sidebarActions.shuffle();
+    first.controller.sidebarActions.openPipeline();
+    first.controller.downloadTheme();
+    first.controller.changeConfiguration({});
+    second.controller.dispose();
+    return { separate, ignored: first.outputs.length === before };
+  });
+  expect(result).toEqual({
+    separate: [
+      { method: 'octree-auto', template: 'poster', canExport: false },
+      { method: 'hue-auto', template: 'landing', canExport: false },
+    ],
+    ignored: true,
+  });
+});

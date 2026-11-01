@@ -41,3 +41,5 @@ export function createTemplatePreview(frame: HTMLIFrameElement) {
     },
   };
 }
+
+export type { PreviewState, TemplateId } from './state.js';

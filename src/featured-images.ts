@@ -9,46 +9,36 @@
 export const FEATURED_IMAGE_FILENAMES: Readonly<Record<string, string>> = {
   The_Third_of_May_1808: 'El tres de mayo de 1808 en Madrid.jpg',
   The_Ambassadors: 'Holbein-ambassadorsFXD.jpg',
-  "Hall_of_the_Bulls": "Lascaux painting.jpg",
-  "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "Lascaux 01.jpg",
-  "Panel_of_Horses": "Chauvet´s cave horses.jpg",
-  "Panel_of_Lions": "Lions painting, Chauvet Cave (museum replica).jpg",
-  "Cave_of_Altamira": "9 Bisonte Magdaleniense polícromo.jpg",
-  "Spotted_Horses": "Chevaux ponctués de la grotte du Pech Merle.jpg",
-  "Warty_Pig_Painting": "Leang Tedongnge rock art panel credit Basran Burhan.jpg",
-  "Pig_and_Human-Like_Figures": "Oldest painting in the world in Leang Karampuang.jpg",
-  "Cueva_de_las_Manos": "SantaCruz-CuevaManos-P2210651b.jpg",
+  Hall_of_the_Bulls: 'Lascaux painting.jpg',
+  'The_Shaft_Scene_(Bird-Headed_Man_and_Bison)': 'Lascaux 01.jpg',
+  Panel_of_Horses: 'Chauvet´s cave horses.jpg',
+  Panel_of_Lions: 'Lions painting, Chauvet Cave (museum replica).jpg',
+  Cave_of_Altamira: '9 Bisonte Magdaleniense polícromo.jpg',
+  Spotted_Horses: 'Chevaux ponctués de la grotte du Pech Merle.jpg',
+  Warty_Pig_Painting: 'Leang Tedongnge rock art panel credit Basran Burhan.jpg',
+  'Pig_and_Human-Like_Figures': 'Oldest painting in the world in Leang Karampuang.jpg',
+  Cueva_de_las_Manos: 'SantaCruz-CuevaManos-P2210651b.jpg',
   A_Sunday_Afternoon_on_the_Island_of_La_Grande_Jatte:
     'A Sunday on La Grande Jatte, Georges Seurat, 1884.png',
-  Woman_with_a_Hat:
-    'Matisse-Woman-with-a-Hat.jpg',
-  'The_Joy_of_Life_(Le_Bonheur_de_Vivre)':
-    'La Joie de vivre, par Henri Matisse.jpg',
-  'The_Green_Stripe_(Portrait_of_Madame_Matisse)':
-    'Matisse - Green Line.jpeg',
-  'Big_Ben_(Derain)':
-    'Big Ben, par André Derain.webp',
-  Dance_II:
-    'La Danse II, par Henri Matisse.jpg',
+  Woman_with_a_Hat: 'Matisse-Woman-with-a-Hat.jpg',
+  'The_Joy_of_Life_(Le_Bonheur_de_Vivre)': 'La Joie de vivre, par Henri Matisse.jpg',
+  'The_Green_Stripe_(Portrait_of_Madame_Matisse)': 'Matisse - Green Line.jpeg',
+  'Big_Ben_(Derain)': 'Big Ben, par André Derain.webp',
+  Dance_II: 'La Danse II, par Henri Matisse.jpg',
   The_Blue_Rider:
     'Wassily Kandinsky, 1903, The Blue Rider (Der Blaue Reiter), oil on canvas, 52.1 x 54.6 cm, Stiftung Sammlung E.G. Bührle, Zurich.jpg',
-  'The_Dessert:_Harmony_in_Red':
-    'Matisse-The-Dessert-Harmony-in-Red-Henri-1908-fast.jpg',
-  The_Bedroom:
-    "Vincent van Gogh - Van Gogh's Bedroom in Arles - Google Art Project.jpg",
-  Luncheon_of_the_Boating_Party:
-    'Luncheon of the Boating Party Renoir 1881.jpg',
+  'The_Dessert:_Harmony_in_Red': 'Matisse-The-Dessert-Harmony-in-Red-Henri-1908-fast.jpg',
+  The_Bedroom: "Vincent van Gogh - Van Gogh's Bedroom in Arles - Google Art Project.jpg",
+  Luncheon_of_the_Boating_Party: 'Luncheon of the Boating Party Renoir 1881.jpg',
   "The_Child's_Bath": "The Child's Bath by Mary Cassatt 1893.jpg",
   The_Gross_Clinic:
     'Thomas Eakins, American - Portrait of Dr. Samuel D. Gross (The Gross Clinic) - Google Art Project.jpg',
   The_Angelus: 'Jean-François Millet Angelus.jpg',
   The_Stone_Breakers: 'Gustave Courbet 018.jpg',
   The_Slave_Ship: 'Slave-ship.jpg',
-  The_Hay_Wain:
-    'John Constable The Hay Wain.jpg',
+  The_Hay_Wain: 'John Constable The Hay Wain.jpg',
   The_Death_of_Marat: 'Death of Marat by David.jpg',
-  The_Milkmaid:
-    'Johannes Vermeer - Het melkmeisje - Google Art Project.jpg',
+  The_Milkmaid: 'Johannes Vermeer - Het melkmeisje - Google Art Project.jpg',
   Composition_VIII: 'Kandinsky - Composition 8, 1923.jpg',
   Broadway_Boogie_Woogie: 'Piet Mondrian, 1942 - Broadway Boogie Woogie.jpg',
   'Senecio_(painting)':
@@ -83,15 +73,24 @@ export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/El_tres_de_mayo_de_1808_en_Madrid.jpg/960px-El_tres_de_mayo_de_1808_en_Madrid.jpg',
   The_Ambassadors:
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Holbein-ambassadorsFXD.jpg/960px-Holbein-ambassadorsFXD.jpg',
-  "Hall_of_the_Bulls": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Lascaux_painting.jpg/960px-Lascaux_painting.jpg",
-  "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "https://upload.wikimedia.org/wikipedia/commons/6/65/Lascaux_01.jpg",
-  "Panel_of_Horses": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Chauvet%C2%B4s_cave_horses.jpg/960px-Chauvet%C2%B4s_cave_horses.jpg",
-  "Panel_of_Lions": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg/960px-Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg",
-  "Cave_of_Altamira": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg/960px-9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg",
-  "Spotted_Horses": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg/960px-Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg",
-  "Warty_Pig_Painting": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg/960px-Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg",
-  "Pig_and_Human-Like_Figures": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Oldest_painting_in_the_world_in_Leang_Karampuang.jpg",
-  "Cueva_de_las_Manos": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/SantaCruz-CuevaManos-P2210651b.jpg/960px-SantaCruz-CuevaManos-P2210651b.jpg",
+  Hall_of_the_Bulls:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Lascaux_painting.jpg/960px-Lascaux_painting.jpg',
+  'The_Shaft_Scene_(Bird-Headed_Man_and_Bison)':
+    'https://upload.wikimedia.org/wikipedia/commons/6/65/Lascaux_01.jpg',
+  Panel_of_Horses:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Chauvet%C2%B4s_cave_horses.jpg/960px-Chauvet%C2%B4s_cave_horses.jpg',
+  Panel_of_Lions:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg/960px-Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg',
+  Cave_of_Altamira:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg/960px-9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg',
+  Spotted_Horses:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg/960px-Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg',
+  Warty_Pig_Painting:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg/960px-Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg',
+  'Pig_and_Human-Like_Figures':
+    'https://upload.wikimedia.org/wikipedia/commons/9/9c/Oldest_painting_in_the_world_in_Leang_Karampuang.jpg',
+  Cueva_de_las_Manos:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/SantaCruz-CuevaManos-P2210651b.jpg/960px-SantaCruz-CuevaManos-P2210651b.jpg',
   A_Sunday_Afternoon_on_the_Island_of_La_Grande_Jatte:
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.png/960px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.png',
   Woman_with_a_Hat:
@@ -124,7 +123,8 @@ export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Slave-ship.jpg/960px-Slave-ship.jpg',
   The_Hay_Wain:
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/John_Constable_The_Hay_Wain.jpg/960px-John_Constable_The_Hay_Wain.jpg',
-  The_Death_of_Marat: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Death_of_Marat_by_David.jpg/500px-Death_of_Marat_by_David.jpg',
+  The_Death_of_Marat:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Death_of_Marat_by_David.jpg/500px-Death_of_Marat_by_David.jpg',
   The_Milkmaid:
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg/500px-Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg',
   Composition_VIII:
@@ -176,29 +176,32 @@ export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
 export const FEATURED_FILE_PAGES: Readonly<Record<string, string>> = {
   The_Third_of_May_1808:
     'https://commons.wikimedia.org/wiki/File:El_tres_de_mayo_de_1808_en_Madrid.jpg',
-  The_Ambassadors:
-    'https://commons.wikimedia.org/wiki/File:Holbein-ambassadorsFXD.jpg',
-  "Hall_of_the_Bulls": "https://commons.wikimedia.org/wiki/File:Lascaux_painting.jpg",
-  "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "https://commons.wikimedia.org/wiki/File:Lascaux_01.jpg",
-  "Panel_of_Horses": "https://commons.wikimedia.org/wiki/File:Chauvet%C2%B4s_cave_horses.jpg",
-  "Panel_of_Lions": "https://commons.wikimedia.org/wiki/File:Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg",
-  "Cave_of_Altamira": "https://commons.wikimedia.org/wiki/File:9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg",
-  "Spotted_Horses": "https://commons.wikimedia.org/wiki/File:Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg",
-  "Warty_Pig_Painting": "https://commons.wikimedia.org/wiki/File:Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg",
-  "Pig_and_Human-Like_Figures": "https://commons.wikimedia.org/wiki/File:Oldest_painting_in_the_world_in_Leang_Karampuang.jpg",
-  "Cueva_de_las_Manos": "https://commons.wikimedia.org/wiki/File:SantaCruz-CuevaManos-P2210651b.jpg",
+  The_Ambassadors: 'https://commons.wikimedia.org/wiki/File:Holbein-ambassadorsFXD.jpg',
+  Hall_of_the_Bulls: 'https://commons.wikimedia.org/wiki/File:Lascaux_painting.jpg',
+  'The_Shaft_Scene_(Bird-Headed_Man_and_Bison)':
+    'https://commons.wikimedia.org/wiki/File:Lascaux_01.jpg',
+  Panel_of_Horses: 'https://commons.wikimedia.org/wiki/File:Chauvet%C2%B4s_cave_horses.jpg',
+  Panel_of_Lions:
+    'https://commons.wikimedia.org/wiki/File:Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg',
+  Cave_of_Altamira:
+    'https://commons.wikimedia.org/wiki/File:9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg',
+  Spotted_Horses:
+    'https://commons.wikimedia.org/wiki/File:Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg',
+  Warty_Pig_Painting:
+    'https://commons.wikimedia.org/wiki/File:Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg',
+  'Pig_and_Human-Like_Figures':
+    'https://commons.wikimedia.org/wiki/File:Oldest_painting_in_the_world_in_Leang_Karampuang.jpg',
+  Cueva_de_las_Manos: 'https://commons.wikimedia.org/wiki/File:SantaCruz-CuevaManos-P2210651b.jpg',
   A_Sunday_Afternoon_on_the_Island_of_La_Grande_Jatte:
     'https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.png',
-  Woman_with_a_Hat:
-    'https://commons.wikimedia.org/wiki/File:Matisse-Woman-with-a-Hat.jpg',
+  Woman_with_a_Hat: 'https://commons.wikimedia.org/wiki/File:Matisse-Woman-with-a-Hat.jpg',
   'The_Joy_of_Life_(Le_Bonheur_de_Vivre)':
     'https://commons.wikimedia.org/wiki/File:La_Joie_de_vivre%2C_par_Henri_Matisse.jpg',
   'The_Green_Stripe_(Portrait_of_Madame_Matisse)':
     'https://commons.wikimedia.org/wiki/File:Matisse_-_Green_Line.jpeg',
   'Big_Ben_(Derain)':
     'https://commons.wikimedia.org/wiki/File:Big_Ben%2C_par_Andr%C3%A9_Derain.webp',
-  Dance_II:
-    'https://commons.wikimedia.org/wiki/File:La_Danse_II%2C_par_Henri_Matisse.jpg',
+  Dance_II: 'https://commons.wikimedia.org/wiki/File:La_Danse_II%2C_par_Henri_Matisse.jpg',
   The_Blue_Rider:
     'https://commons.wikimedia.org/wiki/File:Wassily_Kandinsky%2C_1903%2C_The_Blue_Rider_%28Der_Blaue_Reiter%29%2C_oil_on_canvas%2C_52.1_x_54.6_cm%2C_Stiftung_Sammlung_E.G._B%C3%BChrle%2C_Zurich.jpg',
   'The_Dessert:_Harmony_in_Red':
@@ -211,13 +214,10 @@ export const FEATURED_FILE_PAGES: Readonly<Record<string, string>> = {
     'https://commons.wikimedia.org/wiki/File:The_Child%27s_Bath_by_Mary_Cassatt_1893.jpg',
   The_Gross_Clinic:
     'https://commons.wikimedia.org/wiki/File:Thomas_Eakins%2C_American_-_Portrait_of_Dr._Samuel_D._Gross_%28The_Gross_Clinic%29_-_Google_Art_Project.jpg',
-  The_Angelus:
-    'https://commons.wikimedia.org/wiki/File:Jean-Fran%C3%A7ois_Millet_Angelus.jpg',
-  The_Stone_Breakers:
-    'https://commons.wikimedia.org/wiki/File:Gustave_Courbet_018.jpg',
+  The_Angelus: 'https://commons.wikimedia.org/wiki/File:Jean-Fran%C3%A7ois_Millet_Angelus.jpg',
+  The_Stone_Breakers: 'https://commons.wikimedia.org/wiki/File:Gustave_Courbet_018.jpg',
   The_Slave_Ship: 'https://commons.wikimedia.org/wiki/File:Slave-ship.jpg',
-  The_Hay_Wain:
-    'https://commons.wikimedia.org/wiki/File:John_Constable_The_Hay_Wain.jpg',
+  The_Hay_Wain: 'https://commons.wikimedia.org/wiki/File:John_Constable_The_Hay_Wain.jpg',
   The_Death_of_Marat: 'https://commons.wikimedia.org/wiki/File:Death_of_Marat_by_David.jpg',
   The_Milkmaid:
     'https://commons.wikimedia.org/wiki/File:Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg',
@@ -266,15 +266,24 @@ export const FEATURED_UPLOAD_IMAGES: Readonly<Record<string, string>> = {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/El_tres_de_mayo_de_1808_en_Madrid.jpg/960px-El_tres_de_mayo_de_1808_en_Madrid.jpg',
   The_Ambassadors:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Holbein-ambassadorsFXD.jpg/960px-Holbein-ambassadorsFXD.jpg',
-  "Hall_of_the_Bulls": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Lascaux_painting.jpg/960px-Lascaux_painting.jpg",
-  "The_Shaft_Scene_(Bird-Headed_Man_and_Bison)": "https://upload.wikimedia.org/wikipedia/commons/6/65/Lascaux_01.jpg",
-  "Panel_of_Horses": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Chauvet%C2%B4s_cave_horses.jpg/960px-Chauvet%C2%B4s_cave_horses.jpg",
-  "Panel_of_Lions": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg/960px-Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg",
-  "Cave_of_Altamira": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg/960px-9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg",
-  "Spotted_Horses": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg/960px-Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg",
-  "Warty_Pig_Painting": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg/960px-Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg",
-  "Pig_and_Human-Like_Figures": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Oldest_painting_in_the_world_in_Leang_Karampuang.jpg",
-  "Cueva_de_las_Manos": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/SantaCruz-CuevaManos-P2210651b.jpg/960px-SantaCruz-CuevaManos-P2210651b.jpg",
+  Hall_of_the_Bulls:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Lascaux_painting.jpg/960px-Lascaux_painting.jpg',
+  'The_Shaft_Scene_(Bird-Headed_Man_and_Bison)':
+    'https://upload.wikimedia.org/wikipedia/commons/6/65/Lascaux_01.jpg',
+  Panel_of_Horses:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Chauvet%C2%B4s_cave_horses.jpg/960px-Chauvet%C2%B4s_cave_horses.jpg',
+  Panel_of_Lions:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg/960px-Lions_painting%2C_Chauvet_Cave_%28museum_replica%29.jpg',
+  Cave_of_Altamira:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg/960px-9_Bisonte_Magdaleniense_pol%C3%ADcromo.jpg',
+  Spotted_Horses:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg/960px-Chevaux_ponctu%C3%A9s_de_la_grotte_du_Pech_Merle.jpg',
+  Warty_Pig_Painting:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg/960px-Leang_Tedongnge_rock_art_panel_credit_Basran_Burhan.jpg',
+  'Pig_and_Human-Like_Figures':
+    'https://upload.wikimedia.org/wikipedia/commons/9/9c/Oldest_painting_in_the_world_in_Leang_Karampuang.jpg',
+  Cueva_de_las_Manos:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/SantaCruz-CuevaManos-P2210651b.jpg/960px-SantaCruz-CuevaManos-P2210651b.jpg',
   A_Sunday_Afternoon_on_the_Island_of_La_Grande_Jatte:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.png/960px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.png',
   Woman_with_a_Hat:
@@ -307,7 +316,8 @@ export const FEATURED_UPLOAD_IMAGES: Readonly<Record<string, string>> = {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Slave-ship.jpg/960px-Slave-ship.jpg',
   The_Hay_Wain:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/John_Constable_The_Hay_Wain.jpg/960px-John_Constable_The_Hay_Wain.jpg',
-  The_Death_of_Marat: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Death_of_Marat_by_David.jpg/500px-Death_of_Marat_by_David.jpg',
+  The_Death_of_Marat:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Death_of_Marat_by_David.jpg/500px-Death_of_Marat_by_David.jpg',
   The_Milkmaid:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg/500px-Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg',
   Composition_VIII:
@@ -354,4 +364,46 @@ export const FEATURED_UPLOAD_IMAGES: Readonly<Record<string, string>> = {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Paul_Gauguin_-_D%27ou_venons-nous.jpg/500px-Paul_Gauguin_-_D%27ou_venons-nous.jpg',
   At_the_Moulin_Rouge:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Henri_de_Toulouse-Lautrec_-_At_the_Moulin_Rouge_-_Google_Art_Project.jpg/500px-Henri_de_Toulouse-Lautrec_-_At_the_Moulin_Rouge_-_Google_Art_Project.jpg',
+};
+
+/** Optional image attribution and editorial notes for the shared featured catalog. */
+export const FEATURED_IMAGE_METADATA: Readonly<
+  Record<string, { readonly credit: string; readonly note: string }>
+> = {
+  Hall_of_the_Bulls: {
+    credit: 'Prof saxx · CC BY-SA 3.0',
+    note: 'Hall of the Bulls detail',
+  },
+  'The_Shaft_Scene_(Bird-Headed_Man_and_Bison)': {
+    credit: 'Peter80 · CC BY-SA 3.0',
+    note: 'Shaft scene',
+  },
+  Panel_of_Horses: {
+    credit: 'Thomas T. · CC BY-SA 2.0',
+    note: 'Museum replica',
+  },
+  Panel_of_Lions: {
+    credit: 'HTO · Public domain',
+    note: 'Museum replica',
+  },
+  Cave_of_Altamira: {
+    credit: 'Museo de Altamira y D. Rodríguez · CC BY-SA 3.0',
+    note: 'Polychrome bison',
+  },
+  Spotted_Horses: {
+    credit: 'Céréales Killer · CC BY-SA 4.0',
+    note: 'Spotted horses panel',
+  },
+  Warty_Pig_Painting: {
+    credit: 'Basran Burhan · CC BY-SA 4.0',
+    note: 'Natural-color photograph',
+  },
+  'Pig_and_Human-Like_Figures': {
+    credit: 'Oktaviana et al. · CC BY 4.0',
+    note: 'User-selected Commons photograph',
+  },
+  Cueva_de_las_Manos: {
+    credit: 'Mariano · CC BY-SA 3.0',
+    note: 'Hand stencils',
+  },
 };

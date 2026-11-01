@@ -1,14 +1,15 @@
 import { render } from 'preact';
 import { useLayoutEffect, useRef } from 'preact/hooks';
 import { signal, type Signal } from '@preact/signals';
-import { mountSidebar } from '../modules/sidebar/index.js';
-import { mountWikimediaSearch } from '../modules/wikimedia-search/index.js';
+import { mountSidebar } from '../modules/sidebar';
+import { mountWikimediaSearch } from '../modules/wikimedia-search';
 import { createTemplatePreview } from '../templates/bridge.js';
 import type { ArtworkSources } from '../artwork-sources.js';
 import type { WikimediaArtService } from '../wikimedia-art.service.js';
 import type { AppShell, AppActions } from './contracts.js';
 import type { ShellState } from './ports.js';
 import { createController } from './controller.js';
+import { createDownloadAdapter } from './download.js';
 import { createPipelineAdapter } from './pipeline-adapter.js';
 
 type Controller = ReturnType<typeof createController>;
@@ -27,6 +28,7 @@ function App({ art, sources, actions, state, connect }: Props) {
   const controller = useRef<Controller | null>(null);
   const search = useRef<ReturnType<typeof mountWikimediaSearch> | null>(null);
   useLayoutEffect(() => {
+    const downloads = createDownloadAdapter();
     const preview = createTemplatePreview(frame.current!);
     const pipeline = createPipelineAdapter((config) =>
       controller.current?.changeConfiguration(config),
@@ -55,6 +57,7 @@ function App({ art, sources, actions, state, connect }: Props) {
       {
         preview,
         pipeline,
+        download: downloads.save,
         updateSidebar: sidebar.update,
         updateShell: (next) => {
           state.value = next;
@@ -73,12 +76,13 @@ function App({ art, sources, actions, state, connect }: Props) {
       searchModule.dispose();
       pipeline.destroy();
       preview.dispose();
+      downloads.dispose();
     };
   }, [art, sources, actions, state, connect]);
 
   return (
     <>
-      {/* Empty hosts belong to imperative modules; Preact owns only these elements. */}
+      {/* The shell owns host elements; each module owns its own Preact root. */}
       <aside class="sidebar" id="sidebar" ref={sidebarRoot} />
       <dialog id="searchDialog" aria-labelledby="searchTitle" ref={dialog} />
       <main class="workspace">

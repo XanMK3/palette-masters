@@ -1,4 +1,3 @@
-import { PREHISTORIC_IMAGES } from './prehistoric-images.js';
 import type { WikimediaArtService, CommonsImage } from './wikimedia-art.service.js';
 import type { ArtworkSelection } from './artwork-selection.js';
 import { FEATURED_IMAGE_FILENAMES, FEATURED_DIRECT_IMAGES } from './featured-images.js';
@@ -9,8 +8,7 @@ export function createArtworkSources(art: Pick<WikimediaArtService, 'resolveArtw
   /** Direct <img> URLs deliberately do not depend on API calls (CSP connect-src). */
   const featuredDirectImage = (item: { wikipediaTitle?: string }) =>
     item.wikipediaTitle
-      ? PREHISTORIC_IMAGES[item.wikipediaTitle]?.url ||
-        EMBEDDED_ART_IMAGES[item.wikipediaTitle] ||
+      ? EMBEDDED_ART_IMAGES[item.wikipediaTitle] ||
         FEATURED_DIRECT_IMAGES[item.wikipediaTitle] ||
         null
       : null;
@@ -20,8 +18,6 @@ export function createArtworkSources(art: Pick<WikimediaArtService, 'resolveArtw
     item: ArtworkSelection & { wikipediaTitle: string },
   ): Promise<CommonsImage | null> {
     const key = item.wikipediaTitle;
-    // A missing pinned panel must never be substituted by a title search.
-    if (PREHISTORIC_IMAGES[key]) return Promise.resolve(null);
     const existing = featuredImages.get(key);
     if (existing) return existing;
     const request = art.resolveArtworkImage(

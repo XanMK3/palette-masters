@@ -66,7 +66,6 @@ src/
   app/                         # Preact shell, workflow controller and lifecycle adapters
   modules/sidebar/             # Encapsulated gallery and palette controls
   modules/wikimedia-search/     # Encapsulated search dialog and requests
-  app-ui.ts                    # Compatibility adapter for the shell
   templates/                   # Original reference template markup and scoped styles
     index.ts                   # Mounts bundled templates and initializes icons
     shared.css                 # Reference theme helpers and contextual contrast guards

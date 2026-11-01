@@ -1,6 +1,6 @@
 # Module boundaries
 
-Migration stages 1–4 are implemented. Shell, sidebar and Wikimedia search render
+The six-stage module migration is complete. Shell, sidebar and Wikimedia search render
 with Preact behind their existing public APIs. Shell and search use private
 Signals instances; sidebar components keep interaction state in hooks.
 
@@ -17,8 +17,7 @@ Sidebar and search each have a public `index.ts`, typed `contracts.ts`, private
 root. The shell supplies the aside/dialog host elements; the modules render
 and unmount their Preact contents. Each module can mount with fixture services and
 callbacks without the shell or its siblings. Shared presentation styles remain
-in `index.html` during this extraction; visual styling is not yet independently
-packaged. Existing IDs support one instance of each module per application.
+in `index.html` as the shared application design system. Existing IDs support one instance of each module per application.
 
 ## Shell implementation
 
@@ -73,9 +72,8 @@ disposal, clears its debounce timer, and checks cancellation after asynchronous
 results. Late responses cannot select an artwork after the dialog closes.
 
 The iframe renderer and pipeline viewer retain their existing implementation.
-Only the parent iframe bridge gains listener cleanup. `app-ui.ts` is a small
-compatibility adapter for the old factory signature; application bootstrap uses
-`app/index.ts` directly.
+The parent iframe bridge handles listener cleanup. The obsolete `app-ui.ts`
+compatibility adapter has been removed; application bootstrap uses `app/index.ts`.
 
 ## Verification
 
@@ -105,3 +103,22 @@ Request cancellation and stale-response guards remain independent of rendering.
 Both modules use a Preact artwork component with native image loading, fallback
 URLs and Commons source links. The iframe renderer keeps its framework-independent
 image helper. Sidebar and search no longer inject static HTML templates.
+
+## Final state boundaries
+
+The controller alone owns the selected raster, extraction results, role assignments
+and theme tokens. The sidebar receives a read-only projection of palette colors
+and swatch identities, not the extraction result or its mutable provenance. Its
+callbacks request changes; modules never import a global store. Search owns its
+query/results/request lifetime, while the gallery owns movement and animation
+state. Services remain independent of Preact.
+
+Controller ports describe only the operations needed by the workflow. Browser
+downloads are handled by a shell-owned adapter that revokes pending object URLs
+on disposal. Disposed controllers ignore subsequent UI and image callbacks.
+Public entry points export the viewer and preview contract types, so adapters
+need not import their implementation files.
+
+The browser suite checks current catalog content, public labels and iframe output.
+Former stale assertions for a removed credit element, old catalog counts and
+the old download label have been replaced with current behavior checks.

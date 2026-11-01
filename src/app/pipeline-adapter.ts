@@ -1,8 +1,7 @@
-import { PipelineViewer } from '../pipeline-viewer/index.js';
+import { PipelineViewer, type PipelineViewData } from '../pipeline-viewer';
 import { mountAdvancedControls } from '../extraction/advanced-ui.js';
 import type { PipelineConfig } from '../extraction/types.js';
 import type { PresetId } from '../extraction/presets.js';
-import type { PipelineViewData } from '../pipeline-viewer/model.js';
 
 /** Owns the imperative viewer and its controls; Preact never renders their DOM. */
 export function createPipelineAdapter(onConfiguration: (config: PipelineConfig) => void) {

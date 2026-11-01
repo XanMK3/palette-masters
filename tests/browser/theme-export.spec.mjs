@@ -5,7 +5,7 @@ import { loadArtworkFixture } from './artwork-fixture.mjs';
 
 async function downloadTheme(page) {
   const pending = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Download Tailwind theme', exact: true }).click();
+  await page.getByRole('button', { name: 'Download Tailwind v4 theme', exact: true }).click();
   const download = await pending;
   expect(download.suggestedFilename()).toBe('theme.css');
   return readFile(await download.path(), 'utf8');
@@ -33,9 +33,9 @@ test('download exports current mapped colors and works in an independent Tailwin
 }) => {
   await page.route(/^https:\/\//, (route) => route.abort());
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Download Tailwind theme' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Download Tailwind v4 theme' })).toBeDisabled();
   await loadArtworkFixture(page);
-  await expect(page.getByRole('button', { name: 'Download Tailwind theme' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Download Tailwind v4 theme' })).toBeEnabled();
   for (const action of ['initial', 'manual', 'shuffle']) {
     if (action === 'manual') await page.locator('#swatches select').first().selectOption('accent');
     if (action === 'shuffle') await page.locator('#btn-shuffle').click();

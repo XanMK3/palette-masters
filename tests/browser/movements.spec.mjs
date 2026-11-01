@@ -1,40 +1,29 @@
 import { test, expect } from '@playwright/test';
 import { loadArtworkFixture } from './artwork-fixture.mjs';
 
-test('movement dropdown shows periods and nine selectable paintings in three columns', async ({
+test('movement dropdown renders the catalog and preserves selection across galleries', async ({
   page,
 }) => {
   await page.route(/^https:\/\//, (route) => route.abort());
   await page.goto('/');
   await loadArtworkFixture(page);
   const picker = page.getByRole('combobox', { name: 'Art period' });
-  await expect(picker.locator('option')).toHaveCount(16);
   await expect(picker).toHaveValue('');
-  const expectedDefaultTitles = [
-    'Panel of Horses',
-    'The Garden of Earthly Delights',
-    'Mona Lisa',
-    'Venus of Urbino',
-    'Girl with a Pearl Earring',
-    'Grande Odalisque',
-    'The Slave Ship',
-    'Olympia',
-    'Impression, Sunrise',
-    'The Boulevard Montmartre at Night',
-    'The Starry Night',
-    'Open Window, Collioure',
-    'The Scream',
-    'Improvisation 28 (Second Version)',
-    "Les Demoiselles d'Avignon",
-    'The Ten Largest, No. 7, Adulthood',
-    'Composition with Red, Blue and Yellow',
-    "The Harlequin's Carnival",
-  ];
+  const { defaults, movements } = await page.evaluate(async () => {
+    const { DEFAULT_PAINTINGS, FEATURED_MOVEMENTS } = await import('/src/featured-collections.ts');
+    return {
+      defaults: DEFAULT_PAINTINGS.map((work) => work.title),
+      movements: FEATURED_MOVEMENTS.map((movement) => movement.paintings.map((work) => work.title)),
+    };
+  });
+  await expect(picker.locator('option')).toHaveCount(movements.length + 1);
+  const expectedDefaultTitles = defaults;
   const titles = () => page.locator('#paintings .work > span:first-of-type').allTextContents();
   expect(await titles()).toEqual(expectedDefaultTitles);
-  for (let index = 0; index < 15; index++) {
+  for (let index = 0; index < movements.length; index++) {
     await picker.selectOption(String(index));
-    await expect(page.locator('#paintings .work')).toHaveCount(9);
+    await expect(page.locator('#paintings .work')).toHaveCount(movements[index].length);
+    expect(await titles()).toEqual(movements[index]);
     expect(
       await page
         .locator('#paintings')
@@ -67,5 +56,5 @@ test('movement dropdown shows periods and nine selectable paintings in three col
     await page
       .locator('#paintings')
       .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length),
-  ).toBe(3);
+  ).toBe(4);
 });

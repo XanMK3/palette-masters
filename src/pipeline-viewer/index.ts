@@ -351,3 +351,6 @@ export class PipelineViewer {
     }
   }
 }
+
+export type { PipelineViewData } from './model.js';
+export type { Chapter } from './story.js';

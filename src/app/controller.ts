@@ -34,6 +34,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   let customConfiguration: PipelineConfig | undefined;
   const runs = createRunManager('app');
   function setImage(url: string | null, title: string, key?: string): void {
+    if (lifetime.signal.aborted) return;
     preview.update({ image: { url, title, key } });
   }
   function updatePreviewLabels(item: ArtworkSelection): void {
@@ -103,6 +104,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     return e instanceof Error ? e.message : String(e);
   }
   function setTemplate(next: 'landing' | 'magazine' | 'poster'): void {
+    if (lifetime.signal.aborted) return;
     const requirementsChanged =
       JSON.stringify(TEMPLATE_USAGE[template].requirements) !==
       JSON.stringify(TEMPLATE_USAGE[next].requirements);
@@ -115,6 +117,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     ports.updateShell({ template, canExport: appliedThemeTokens !== null });
   }
   function changeConfiguration(config: PipelineConfig) {
+    if (lifetime.signal.aborted) return;
     customConfiguration = config;
     const chapter = pipelineViewer.chapter;
     const refresh = pipelineViewer.isOpen;
@@ -123,7 +126,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   }
 
   function openPipeline(chapter: typeof pipelineViewer.chapter = 'sample') {
-    if (!palette || !imageData) return;
+    if (lifetime.signal.aborted || !palette || !imageData) return;
     try {
       const { result: theme } = buildPaletteTheme(
         palette,
@@ -137,36 +140,31 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     }
   }
   function downloadTheme() {
-    if (!appliedThemeTokens) return;
-    const url = URL.createObjectURL(
-      new Blob([exportTailwindTheme(appliedThemeTokens)], { type: 'text/css;charset=utf-8' }),
-    );
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'theme.css';
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    if (lifetime.signal.aborted || !appliedThemeTokens) return;
+    ports.download('theme.css', exportTailwindTheme(appliedThemeTokens), 'text/css;charset=utf-8');
   }
   const sidebarActions: SidebarActions = {
     selectPainting: (item) => {
-      void selectPainting(item);
+      if (!lifetime.signal.aborted) void selectPainting(item);
     },
     changeMethod(next, label) {
+      if (lifetime.signal.aborted) return;
       method = next;
       methodLabel = label;
       customConfiguration = undefined;
       pipelineViewer.preset(method);
       if (imageData) updatePalette();
+      else renderSidebar();
     },
     assignRole(role, index) {
+      if (lifetime.signal.aborted) return;
       if (!assignments || !palette) return;
       userMapping = true;
       assignments = reassignRole(assignments, role, index, palette.colors.length);
       updateMapping();
     },
     shuffle() {
+      if (lifetime.signal.aborted) return;
       if (!assignments || !palette) return;
       userMapping = true;
       assignments = shuffleAssignments(assignments, palette.colors.length);
