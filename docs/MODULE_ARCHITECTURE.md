@@ -1,8 +1,8 @@
 # Module boundaries
 
-Migration stages 1–3 are implemented. The shell uses Preact and a private Signals
-instance; sidebar and search remain plain TypeScript behind their public APIs.
-Their internal Preact conversion is the next stage.
+Migration stages 1–4 are implemented. Shell, sidebar and Wikimedia search render
+with Preact behind their existing public APIs. Shell and search use private
+Signals instances; sidebar components keep interaction state in hooks.
 
 | Owner / public entry | State and responsibility | Contract |
 | --- | --- | --- |
@@ -13,9 +13,9 @@ Their internal Preact conversion is the next stage.
 | `src/templates/bridge.ts` | Preview state and iframe messaging lifecycle | `createTemplatePreview(frame)` returns `update(Partial<PreviewState>)` and `dispose()`; renderer consumes `PreviewState` |
 
 Sidebar and search each have a public `index.ts`, typed `contracts.ts`, private
-`module.ts`, and owned `view.html`. Their DOM queries stay inside the supplied
-root. The shell supplies the aside/dialog host elements; the modules populate
-and clear their contents. Each module can mount with fixture services and
+`module.tsx`, and private components. Their DOM queries stay inside the supplied
+root. The shell supplies the aside/dialog host elements; the modules render
+and unmount their Preact contents. Each module can mount with fixture services and
 callbacks without the shell or its siblings. Shared presentation styles remain
 in `index.html` during this extraction; visual styling is not yet independently
 packaged. Existing IDs support one instance of each module per application.
@@ -89,3 +89,19 @@ behavior across the complete application.
 `tests/browser/shell-lifecycle.spec.mjs` mounts the Preact shell with fixture
 services, supplies pixels immediately after mounting, checks stable module DOM
 through toolbar updates, opens the viewer, and verifies disposal and remounting.
+
+## Module rendering
+
+The sidebar contains private gallery, image, swatch and header components. State
+updates preserve keyed cards and loaded images. Its public `update` still applies
+state synchronously. The expansion animation owns a dedicated empty host inside
+the gallery; only that adapter creates cloned image/animation DOM and it cleans
+up on movement changes and unmounting. Extraction presets are rendered from the
+shared preset IDs and labels, verified by the isolated browser test.
+
+Search owns reactive query, result and artist-work views. Its native dialog stays
+under the public open/close lifecycle, preserving focus and Escape behavior.
+Request cancellation and stale-response guards remain independent of rendering.
+Both modules use a Preact artwork component with native image loading, fallback
+URLs and Commons source links. The iframe renderer keeps its framework-independent
+image helper. Sidebar and search no longer inject static HTML templates.

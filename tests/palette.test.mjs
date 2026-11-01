@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 import {
   extractPalette,
   mmcq,
@@ -16,21 +15,13 @@ import {
 } from './fixtures/extraction.mjs';
 import { slicRegions } from '../.cache/tests/slic.js';
 
-import { PRESET_IDS as methods, PRESET_LABELS } from '../.cache/tests/extraction/presets.js';
+import { PRESET_IDS as methods } from '../.cache/tests/extraction/presets.js';
 function raster(width, height, pixel) {
   const data = new Uint8ClampedArray(width * height * 4);
   for (let y = 0; y < height; y++)
     for (let x = 0; x < width; x++) data.set(pixel(x, y), (y * width + x) * 4);
   return { width, height, data };
 }
-
-test('selector exposes exactly the six supported methods with accurate names', () => {
-  const html = readFileSync(new URL('../src/modules/sidebar/view.html', import.meta.url), 'utf8');
-  const select = html.match(/<select id="method">([\s\S]*?)<\/select>/)[1];
-  const options = [...select.matchAll(/<option value="([^"]+)">([^<]+)<\/option>/g)];
-  assert.deepEqual(options.map((m) => m[1]).sort(), [...methods].sort());
-  for (const option of options) assert.equal(option[2].trim(), PRESET_LABELS[option[1]]);
-});
 
 test('all methods handle tiny, monochrome, thin and partially transparent images without inventing colors', () => {
   const fixtures = [

@@ -32,6 +32,12 @@ test('sidebar mounts independently, emits intents, accepts state, and remounts c
       },
     };
     let sidebar = mountSidebar(root, options);
+    const { PRESET_IDS, PRESET_LABELS } = await import('/src/extraction/presets.ts');
+    const methods = Array.from(root.querySelector('#method').options, (option) => [
+      option.value,
+      option.textContent,
+    ]);
+    const expectedMethods = PRESET_IDS.map((id) => [id, PRESET_LABELS[id]]);
     const first = root.querySelector('.work');
     const title = first.dataset.wikipediaTitle;
     first.click();
@@ -52,9 +58,10 @@ test('sidebar mounts independently, emits intents, accepts state, and remounts c
     sidebar = mountSidebar(root, options);
     const optionsCount = root.querySelector('#movementPicker').options.length;
     sidebar.dispose();
-    return { events, selected, error, empty, optionsCount };
+    return { events, selected, error, empty, optionsCount, methods, expectedMethods };
   });
   expect(result.events.map((event) => event[0])).toEqual(['select', 'method']);
+  expect(result.methods).toEqual(result.expectedMethods);
   expect(result.selected).toBe('true');
   expect(result.error).toBe('Fixture error');
   expect(result.empty).toBe(true);
@@ -139,4 +146,57 @@ test('search cancels stale queries and detail selection on close, then remounts'
     'Chosen',
   ]);
   expect(await page.evaluate(() => window.fixture.pending.length)).toBe(4);
+});
+
+test('search renders artist works and selects through its public callback', async ({ page }) => {
+  await blankPage(page);
+  await page.evaluate(async () => {
+    const { mountWikimediaSearch } = await import('/src/modules/wikimedia-search/index.ts');
+    const root = document.createElement('dialog');
+    document.body.append(root);
+    window.selectedWorks = [];
+    const module = mountWikimediaSearch(root, {
+      service: {
+        searchAll: async () => ({
+          entities: [
+            { id: 'Q1', label: 'Fixture artist', kindHint: 'artist', description: 'Painter' },
+          ],
+          images: [],
+          errors: [],
+        }),
+        getEntity: async () => ({
+          id: 'Q1',
+          label: 'Fixture artist',
+          description: 'Artist biography',
+        }),
+        getArtistPaintings: async () => [
+          {
+            id: 'Q2',
+            title: 'Fixture painting',
+            year: 1900,
+            imageUrl: null,
+            imageFilename: 'Fixture.jpg',
+          },
+        ],
+      },
+      onSelect: (item) => window.selectedWorks.push(item),
+    });
+    module.open();
+  });
+  await page.locator('#searchQuery').fill('fixture');
+  await page.locator('#searchQuery').press('Enter');
+  await page.getByRole('button', { name: /Fixture artist/ }).click();
+  await expect(page.locator('#artistWorks')).toContainText('Artist biography');
+  await expect(page.locator('#searchQuery')).toHaveValue('Fixture artist');
+  await page.getByRole('button', { name: /Fixture painting/ }).click();
+  await expect(page.locator('dialog')).not.toBeVisible();
+  expect(await page.evaluate(() => window.selectedWorks)).toEqual([
+    {
+      title: 'Fixture painting',
+      artist: 'Fixture artist',
+      date: '1900',
+      qid: 'Q2',
+      filename: 'Fixture.jpg',
+    },
+  ]);
 });
