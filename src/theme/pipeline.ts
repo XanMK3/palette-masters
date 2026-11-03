@@ -5,7 +5,7 @@ import { rgbToHex, hexToRgb } from '../extraction/color-math.js';
 import { createTheme, ROLE_KEYS, type RoleAssignments } from '../theme.service.js';
 import { TEMPLATE_USAGE, type UsageManifest } from './validation.js';
 export function buildPaletteTheme(
-  palette: PipelineResult,
+  palette: Pick<PipelineResult, 'swatches'>,
   manifest: UsageManifest = TEMPLATE_USAGE.landing,
   context: StageContext = {},
   user?: RoleAssignments,

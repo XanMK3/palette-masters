@@ -122,3 +122,28 @@ need not import their implementation files.
 The browser suite checks current catalog content, public labels and iframe output.
 Former stale assertions for a removed credit element, old catalog counts and
 the old download label have been replaced with current behavior checks.
+
+## Asynchronous palette computation
+
+The shell creates one `createComputation()` adapter and injects it through
+`ControllerPorts.computation`. The controller owns its cancellation/disposal.
+The adapter lazily starts a Vite-bundled worker, reuses it while idle, and terminates
+a busy worker when superseded. Request IDs plus controller revisions reject stale
+results even across worker replacement. No synchronous fallback runs in the UI.
+
+The worker owns raster fingerprinting, extraction, automatic preset comparisons,
+visual-history capture, and theme mapping. A transferred copy preserves the main
+thread's original pixels for the viewer. Mapping requests send only swatches,
+template ID and optional manual assignments, without rerunning extraction.
+Completed provenance and theme data are cached in the controller for the viewer.
+
+While computation is pending, the previous theme/swatches remain visible, and
+export, role editing and viewer opening are disabled. Accepted results replace
+palette, assignments and tokens together. A template change during extraction
+remaps the completed palette before publishing it. Errors preserve the previous
+appearance; another painting or algorithm retries. Advanced-control updates refresh
+the viewer only if it remains open, preserving its current chapter and focus.
+
+`tests/browser/computation.spec.mjs` checks worker parity across all presets,
+mapping, raster ownership, cancellation, recovery, and animation-frame advancement
+during real worker computation. Controller tests also cover delayed/stale replies.

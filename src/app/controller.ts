@@ -1,14 +1,14 @@
 import type { ControllerPorts } from './ports.js';
 import type { SidebarActions } from '../modules/sidebar/index.js';
 import { exportTailwindTheme } from '../theme/export.js';
-import { buildPaletteTheme } from '../theme/pipeline.js';
+import type { ComputationInput } from '../computation/contracts.js';
+import type { ThemeResult } from '../extraction/types.js';
 import { DEFAULT_PRESET, PRESET_LABELS } from '../extraction/presets.js';
-import { createRunManager, rasterFingerprint } from '../extraction/run.js';
 import { TEMPLATE_USAGE } from '../theme/validation.js';
 import type { PipelineConfig } from '../extraction/types.js';
 import type { ArtworkSelection } from '../artwork-selection.js';
 import type { AppActions } from './contracts.js';
-import { extractPalette, type PaletteMethod, type PaletteResult } from '../palette.service.js';
+import type { PaletteMethod, PaletteResult } from '../palette.service.js';
 import {
   reassignRole,
   shuffleAssignments,
@@ -18,7 +18,7 @@ import {
 
 export function createController(ports: ControllerPorts, actions: AppActions) {
   const { selectPainting } = actions;
-  const { preview, pipeline: pipelineViewer } = ports;
+  const { preview, pipeline: pipelineViewer, computation } = ports;
   const lifetime = new AbortController();
   let selection: ArtworkSelection | null = null;
   let searchedArtwork: { item: ArtworkSelection; url: string | null } | undefined;
@@ -34,7 +34,9 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   let template: 'landing' | 'magazine' | 'poster' = 'landing';
   let userMapping = false;
   let customConfiguration: PipelineConfig | undefined;
-  const runs = createRunManager('app');
+  let revision = 0;
+  let resultReady = false;
+  let themeResult: ThemeResult | null = null;
   function setImage(url: string | null, title: string, key?: string): void {
     if (lifetime.signal.aborted) return;
     preview.update({ image: { url, title, key } });
@@ -53,7 +55,9 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   function beginSelection(): void {
     error = '';
     pipelineViewer.dispose();
-    runs.cancel();
+    revision++;
+    computation.cancel();
+    resultReady = false;
     palettePending = true;
     imageData = null;
     publishShell();
@@ -67,50 +71,85 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
       assignments,
       method,
       error,
-      palettePending,
+      palettePending: palettePending || !resultReady,
     });
   }
-  function updateMapping(keepViewer = false): void {
+  async function compute(
+    input: ComputationInput,
+    keepViewer = false,
+    requestedUserMapping = false,
+  ): Promise<void> {
+    const current = ++revision;
     if (!keepViewer) pipelineViewer.dispose();
-    if (!palette || palettePending) return;
-    const { theme } = buildPaletteTheme(
-      palette,
-      TEMPLATE_USAGE[template],
-      {},
-      userMapping && assignments ? assignments : undefined,
-    );
-    assignments = theme.assignments;
-    appliedThemeTokens = theme.tokens;
-    publishShell();
-    preview.update({ tokens: theme.tokens });
-    renderSidebar();
-  }
-  function updatePalette(keepViewer = false): void {
+    const raster = imageData;
+    palettePending = true;
+    resultReady = false;
     error = '';
-    if (!imageData) return;
+    publishShell();
+    renderSidebar();
     try {
-      const run = runs.start({
-        inputFingerprint: rasterFingerprint(imageData),
-        algorithmVersion: 'pipeline-v1',
-      });
-      const next = extractPalette(
-        imageData,
-        { method, count: paletteSize, configuration: customConfiguration },
-        { ...run, captureVisuals: true },
-      );
-      run.assertCurrent();
+      let requestedTemplate = input.template;
+      let result = await computation.run(input);
+      const nextPalette = result.palette ?? palette;
+      if (!nextPalette) throw new Error('No palette available');
+      // Template switches during extraction do not restart the expensive pixel work.
+      while (!lifetime.signal.aborted && current === revision && requestedTemplate !== template) {
+        requestedTemplate = template;
+        result = await computation.run({
+          kind: 'map',
+          palette: { swatches: nextPalette.swatches },
+          template: requestedTemplate,
+          assignments: requestedUserMapping && input.kind === 'map' ? input.assignments : undefined,
+        });
+      }
+      if (lifetime.signal.aborted || current !== revision || raster !== imageData) return;
+      palette = nextPalette;
+      assignments = result.mapping.theme.assignments;
+      appliedThemeTokens = result.mapping.theme.tokens;
+      themeResult = result.mapping.result;
+      userMapping = requestedUserMapping;
       palettePending = false;
-      palette = next;
-      userMapping = false;
-      assignments = null;
-      updateMapping(keepViewer);
+      resultReady = true;
       preview.update({
+        tokens: appliedThemeTokens,
         algorithmLabel: customConfiguration ? 'Custom' : methodLabel,
       });
-    } catch (error) {
-      setError(`Extraction failed: ${message(error)}`);
-      console.warn('Palette extraction failed', error);
+      publishShell();
+      renderSidebar();
+      // A viewer closed during the request must stay closed.
+      if (keepViewer && pipelineViewer.isOpen) openPipeline(pipelineViewer.chapter);
+    } catch (failure) {
+      if (lifetime.signal.aborted || current !== revision) return;
+      palettePending = false;
+      error = `Palette computation failed: ${message(failure)}. Try another painting or algorithm.`;
+      publishShell();
+      renderSidebar();
     }
+  }
+  function updateMapping(nextAssignments?: RoleAssignments): void {
+    if (!palette || !imageData || !resultReady) return;
+    void compute(
+      {
+        kind: 'map',
+        palette: { swatches: palette.swatches },
+        template,
+        assignments: nextAssignments ?? (userMapping ? (assignments ?? undefined) : undefined),
+      },
+      false,
+      !!nextAssignments || userMapping,
+    );
+  }
+  function updatePalette(keepViewer = false): void {
+    if (!imageData) return;
+    void compute(
+      {
+        kind: 'extract',
+        image: imageData,
+        options: { method, count: paletteSize, configuration: customConfiguration },
+        template,
+      },
+      keepViewer,
+    );
   }
   function message(e: unknown): string {
     return e instanceof Error ? e.message : String(e);
@@ -126,33 +165,35 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     publishShell();
   }
   function publishShell() {
-    ports.updateShell({ template, canExport: appliedThemeTokens !== null && !palettePending });
+    ports.updateShell({
+      template,
+      canExport: appliedThemeTokens !== null && resultReady && !palettePending,
+    });
   }
   function changeConfiguration(config: PipelineConfig) {
     if (lifetime.signal.aborted) return;
     customConfiguration = config;
-    const chapter = pipelineViewer.chapter;
-    const refresh = pipelineViewer.isOpen;
-    updatePalette(refresh);
-    if (refresh) openPipeline(chapter);
+    updatePalette(pipelineViewer.isOpen);
   }
 
   function openPipeline(chapter: typeof pipelineViewer.chapter = 'sample') {
-    if (lifetime.signal.aborted || palettePending || !palette || !imageData) return;
+    if (
+      lifetime.signal.aborted ||
+      !resultReady ||
+      palettePending ||
+      !palette ||
+      !imageData ||
+      !themeResult
+    )
+      return;
     try {
-      const { result: theme } = buildPaletteTheme(
-        palette,
-        TEMPLATE_USAGE[template],
-        {},
-        userMapping && assignments ? assignments : undefined,
-      );
-      pipelineViewer.open({ result: palette, theme }, imageData, chapter);
+      pipelineViewer.open({ result: palette, theme: themeResult }, imageData, chapter);
     } catch (error) {
       setError(`Cannot show pipeline: ${message(error)}`);
     }
   }
   function downloadTheme() {
-    if (lifetime.signal.aborted || palettePending || !appliedThemeTokens) return;
+    if (lifetime.signal.aborted || !resultReady || palettePending || !appliedThemeTokens) return;
     ports.download('theme.css', exportTailwindTheme(appliedThemeTokens), 'text/css;charset=utf-8');
   }
   const sidebarActions: SidebarActions = {
@@ -170,17 +211,13 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     },
     assignRole(role, index) {
       if (lifetime.signal.aborted) return;
-      if (palettePending || !assignments || !palette) return;
-      userMapping = true;
-      assignments = reassignRole(assignments, role, index, palette.colors.length);
-      updateMapping();
+      if (!resultReady || palettePending || !assignments || !palette) return;
+      updateMapping(reassignRole(assignments, role, index, palette.colors.length));
     },
     shuffle() {
       if (lifetime.signal.aborted) return;
-      if (palettePending || !assignments || !palette) return;
-      userMapping = true;
-      assignments = shuffleAssignments(assignments, palette.colors.length);
-      updateMapping();
+      if (!resultReady || palettePending || !assignments || !palette) return;
+      updateMapping(shuffleAssignments(assignments, palette.colors.length));
     },
     openPipeline: () => openPipeline(),
   };
@@ -211,7 +248,8 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     },
     dispose() {
       lifetime.abort();
-      runs.cancel();
+      revision++;
+      computation.dispose();
     },
   };
 }

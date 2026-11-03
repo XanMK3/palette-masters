@@ -9,6 +9,7 @@ export interface ShellState {
 }
 /** Workflow dependencies describe capabilities, not concrete UI implementations. */
 export interface ControllerPorts {
+  computation: import('../computation/contracts.js').Computation;
   updateSidebar(state: SidebarState): void;
   updateShell(state: ShellState): void;
   preview: { update(state: Partial<PreviewState>): void };

@@ -8,6 +8,7 @@ import type { ArtworkSources } from '../artwork-sources.js';
 import type { WikimediaArtService } from '../wikimedia-art.service.js';
 import type { AppShell, AppActions } from './contracts.js';
 import type { ShellState } from './ports.js';
+import { createComputation } from '../computation/client.js';
 import { createController } from './controller.js';
 import { createDownloadAdapter } from './download.js';
 import { createPipelineAdapter } from './pipeline-adapter.js';
@@ -56,6 +57,7 @@ function App({ art, sources, actions, state, connect }: Props) {
     search.current = searchModule;
     const workflow = createController(
       {
+        computation: createComputation(),
         preview,
         pipeline,
         download: downloads.save,

@@ -69,12 +69,15 @@ npm run build
 A self-hosted deployment typically needs an image policy permitting your local/cache assets and approved Wikimedia hosts. If directly fetching Wikimedia APIs, a possible **partial** CSP is:
 
 ```text
+worker-src 'self';
 connect-src 'self' https://www.wikidata.org https://commons.wikimedia.org
   https://query.wikidata.org https://en.wikipedia.org
   https://upload.wikimedia.org https://thumb.wikimedia.org;
 img-src 'self' data: blob: https://upload.wikimedia.org
   https://thumb.wikimedia.org https://commons.wikimedia.org;
 ```
+
+Palette extraction and theme mapping use a same-origin bundled Web Worker. Serve the worker asset with the rest of the Vite build and allow it through `worker-src`. If worker startup is blocked, the app retains the previous palette and shows an error; it does not fall back to blocking the main thread.
 
 This is not a complete hardened production CSP. The HTML includes inline CSS; for a strict production CSP, separate assets or use hashes/nonces.
 

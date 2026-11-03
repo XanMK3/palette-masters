@@ -88,12 +88,14 @@ test('workflow instances keep state separate and ignore all intents after dispos
   await page.goto('/controller-fixture');
   const result = await page.evaluate(async () => {
     const { createController } = await import('/src/app/controller.ts');
+    const { createComputation } = await import('/src/computation/client.ts');
     function fixture() {
       const outputs = [];
       let sidebar;
       let shell;
       const controller = createController(
         {
+          computation: createComputation(),
           updateSidebar: (state) => {
             sidebar = state;
             outputs.push('sidebar');
@@ -166,11 +168,13 @@ test('painting changes retain the previous theme until replacement pixels arrive
   await page.goto('/transition-fixture');
   const result = await page.evaluate(async () => {
     const { createController } = await import('/src/app/controller.ts');
+    const { createComputation } = await import('/src/computation/client.ts');
     let sidebar, shell;
     const themes = [];
     let downloads = 0;
     const controller = createController(
       {
+        computation: createComputation(),
         updateSidebar: (value) => (sidebar = value),
         updateShell: (value) => (shell = value),
         preview: {
@@ -190,6 +194,7 @@ test('painting changes retain the previous theme until replacement pixels arrive
     };
     controller.selectionStarted({ title: 'First', artist: '', date: '' });
     controller.pixelsReady(pixels([180, 40, 20]));
+    while (!shell.canExport) await new Promise((resolve) => setTimeout(resolve, 10));
     const oldPalette = sidebar.palette;
     const oldAssignments = sidebar.assignments;
     const before = themes.length;
@@ -209,6 +214,7 @@ test('painting changes retain the previous theme until replacement pixels arrive
     controller.selectionStarted({ title: 'Third', artist: '', date: '' });
     const noReset = themes.length === before;
     controller.pixelsReady(pixels([20, 60, 190]));
+    while (!shell.canExport) await new Promise((resolve) => setTimeout(resolve, 10));
     const ready = {
       newPalette: sidebar.palette !== oldPalette,
       updates: themes.length - before,

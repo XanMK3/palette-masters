@@ -26,6 +26,8 @@ export function createPipelineAdapter(onConfiguration: (config: PipelineConfig) 
     },
     preset: (id: PresetId) => controls.preset(id),
     open(data: PipelineViewData, image: ImageData, chapter: typeof viewer.chapter) {
+      const focused = viewer.isOpen ? (document.activeElement as HTMLElement | null) : null;
+      const restoreFocus = !!focused?.closest('.pipeline-viewer');
       controls.populate(data.result.configuration.effective, !viewer.isOpen);
       viewer.open(
         data,
@@ -33,6 +35,12 @@ export function createPipelineAdapter(onConfiguration: (config: PipelineConfig) 
         { advanced: host, select: (kind) => controls.select(kind) },
         chapter,
       );
+      if (restoreFocus && focused && !focused.isConnected) {
+        const replacement = focused.id ? document.getElementById(focused.id) : null;
+        (replacement ?? document.querySelector<HTMLElement>('.pv-selection select'))?.focus({
+          preventScroll: true,
+        });
+      }
     },
     dispose() {
       viewer.dispose();

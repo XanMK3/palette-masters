@@ -71,6 +71,7 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
   await expect(page.locator('.searched-preview img')).toHaveClass('loaded');
   await expect(page.locator('.searched-preview')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.searched-caption')).toContainText('Test painting');
+  await expect(page.locator('#download-theme')).toBeEnabled();
   const palette = await page.locator('#swatches').textContent();
   await source('Curated').click();
   await expect(page.locator('#movementPicker')).toHaveValue('1');
