@@ -5,14 +5,14 @@
   max-height: 96dvh;
   margin: auto;
   padding: 18px 22px;
-  border: 1px solid #475548;
+  border: 1px solid var(--shell-border);
   border-radius: 16px;
-  background: #121917;
-  color: #eaece7;
-  box-shadow: 0 24px 100px #0005;
+  background: var(--shell-panel-background);
+  color: var(--shell-text);
+  box-shadow: 0 24px 100px var(--shell-shadow);
 }
 .pipeline-viewer::backdrop {
-  background: #111c;
+  background: var(--shell-backdrop);
 }
 .pipeline-viewer [hidden] {
   display: none !important;
@@ -29,17 +29,17 @@
 }
 .pipeline-viewer button {
   cursor: pointer;
-  border: 1px solid #475548;
+  border: 1px solid var(--shell-border);
   border-radius: 7px;
-  background: #27342b;
-  color: #eaece7;
+  background: var(--shell-surface-raised);
+  color: var(--shell-text);
   padding: 7px 12px;
   font-size: 13px;
 }
 .pipeline-viewer button:focus-visible,
 .pipeline-viewer input:focus-visible,
 .pipeline-viewer select:focus-visible {
-  outline: 3px solid #edc48e;
+  outline: 3px solid var(--shell-focus);
   outline-offset: 3px;
 }
 .pipeline-viewer button:disabled {
@@ -59,20 +59,20 @@
   background: transparent;
 }
 .pipeline-viewer button[aria-current='true'] {
-  background: #455348;
-  color: white;
+  background: var(--shell-surface-active);
+  color: var(--shell-text-bright);
 }
 .pv-duration,
 .pv-hint {
   font-size: 12px;
-  color: #57534e;
+  color: var(--shell-text-muted);
 }
 .pv-painting {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #101514;
+  background: var(--shell-background);
   border-radius: 10px;
   overflow: hidden;
   height: min(52dvh, 470px);
@@ -86,8 +86,8 @@
   position: absolute;
   bottom: 10px;
   left: 10px;
-  background: #000a;
-  color: white;
+  background: var(--shell-overlay);
+  color: var(--shell-text-bright);
   font-size: 11px;
   padding: 3px 7px;
   border-radius: 4px;
@@ -111,18 +111,18 @@
   min-width: 24px;
   flex: 1;
   height: 35px;
-  border: 1px solid #0003;
+  border: 1px solid var(--shell-swatch-border);
   padding: 0;
   position: relative;
 }
 .pv-swatch[aria-pressed='true'] {
-  outline: 3px solid #edc48e;
+  outline: 3px solid var(--shell-focus);
   outline-offset: 2px;
 }
 .pv-swatch span {
   font-size: 10px;
-  color: #fff;
-  background: #000b;
+  color: var(--shell-text-bright);
+  background: var(--shell-swatch-label);
   padding: 2px 4px;
   border-radius: 3px;
 }
@@ -150,8 +150,8 @@
   min-width: 45px;
 }
 .pv-controls button[aria-pressed='true'] {
-  background: #455348;
-  color: white;
+  background: var(--shell-surface-active);
+  color: var(--shell-text-bright);
 }
 .pv-hint {
   display: block;
@@ -173,7 +173,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 1px solid #0003;
+  border: 1px solid var(--shell-swatch-border);
 }
 .pv-theme-card {
   position: absolute;
@@ -183,9 +183,9 @@
   max-width: calc(100% - 32px);
   box-sizing: border-box;
   padding: 15px;
-  border: 1px solid #ffffff60;
+  border: 1px solid var(--shell-overlay-border);
   border-radius: 10px;
-  box-shadow: 0 5px 20px #0006;
+  box-shadow: 0 5px 20px var(--shell-shadow);
   font-size: 14px;
 }
 @media (max-width: 650px) {
@@ -228,7 +228,7 @@
   flex-shrink: 0;
 }
 .pipeline-viewer nav > span {
-  color: #b7c1b7;
+  color: var(--shell-text-muted);
   font-size: 12px;
 }
 .pv-selection {
@@ -240,11 +240,11 @@
   margin: 8px 0;
 }
 .pv-selection select {
-  border: 1px solid #475548;
+  border: 1px solid var(--shell-border);
   border-radius: 6px;
   padding: 4px 8px;
-  background: #27342b;
-  color: #eaece7;
+  background: var(--shell-surface-raised);
+  color: var(--shell-text);
 }
 .pv-theme-card .pv-roles {
   gap: 4px 8px;
@@ -265,7 +265,7 @@
 }
 .pipeline-viewer .advanced-pipeline {
   margin-top: 16px;
-  border-top: 1px solid #475548;
+  border-top: 1px solid var(--shell-border);
   padding-top: 12px;
 }
 @media (max-width: 650px) {
@@ -302,10 +302,14 @@
 
 .pipeline-viewer .pipeline-fields input,
 .pipeline-viewer .pipeline-fields select {
-  background: #27342b;
-  color: #eaece7;
-  border-color: #475548;
+  background: var(--shell-surface-raised);
+  color: var(--shell-text);
+  border-color: var(--shell-border);
 }
 .pipeline-viewer input[type='range'] {
-  accent-color: #d1a87a;
+  accent-color: var(--shell-accent);
+}
+
+.pipeline-viewer button:hover:not(:disabled):not(.pv-swatch) {
+  border-color: var(--shell-border-emphasis);
 }

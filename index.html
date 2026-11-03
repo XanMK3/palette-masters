@@ -36,6 +36,7 @@
         color: var(--shell-text);
         background: var(--shell-background);
         font-synthesis: none;
+        color-scheme: dark;
       }
       * {
         box-sizing: border-box;
@@ -83,14 +84,7 @@
       .sidebar {
         min-height: 0;
         overflow: hidden;
-        background:
-          radial-gradient(ellipse at 0% 0%, var(--shell-sidebar-glow), transparent 65%),
-          linear-gradient(
-            165deg,
-            var(--shell-sidebar-start),
-            var(--shell-surface) 65%,
-            var(--shell-sidebar-end)
-          );
+        background: var(--shell-panel-background);
         border-right: 1px solid var(--shell-border);
         display: flex;
         flex-direction: column;
@@ -556,7 +550,7 @@
         padding: 24px;
         overflow-y: auto;
         color: var(--shell-text);
-        background: var(--shell-surface);
+        background: var(--shell-panel-background);
         border: 1px solid var(--shell-border);
         border-radius: 14px;
         box-shadow: 0 24px 80px var(--shell-shadow);
@@ -718,22 +712,6 @@
         flex-direction: column;
         flex: 1;
         min-height: 0;
-      }
-      .sidebar .loading-art,
-      #searchDialog .loading-art {
-        background: var(--shell-placeholder);
-        color: var(--shell-text);
-      }
-      .sidebar .missing-art,
-      #searchDialog .missing-art {
-        background: var(--shell-placeholder) !important;
-        color: var(--shell-text) !important;
-      }
-      .sidebar .loading-art a,
-      .sidebar .missing-art a,
-      #searchDialog .loading-art a,
-      #searchDialog .missing-art a {
-        color: var(--shell-text);
       }
       .preview-scroll {
         width: 100%;

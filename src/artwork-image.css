@@ -1,3 +1,4 @@
+/* App modules use shell tokens; template images inherit their extracted palette. */
 .image-holder {
   position: relative;
   width: 100%;
@@ -19,8 +20,8 @@
 .loading-art {
   position: absolute;
   inset: 0;
-  background: #35463e;
-  color: #fae9d3;
+  background: var(--shell-placeholder, var(--color-surface));
+  color: var(--shell-text, var(--color-surface-text-contrast));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,13 +34,13 @@
   overflow: hidden;
 }
 .loading-art.unavailable-art {
-  background: #493a31;
+  background: var(--shell-surface-raised, var(--color-surface));
 }
 .loading-art[hidden] {
   display: none;
 }
 .loading-art a {
-  color: #fff2db;
+  color: var(--shell-accent, var(--color-surface-text-contrast));
   font: 10px system-ui;
   margin-top: 6px;
 }
@@ -49,8 +50,8 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: #394f47 !important;
-  color: #f5ecde !important;
+  background: var(--shell-placeholder, var(--color-surface)) !important;
+  color: var(--shell-text, var(--color-surface-text-contrast)) !important;
   text-align: center;
   padding: 8px !important;
   min-height: 100%;
@@ -73,6 +74,6 @@
 }
 .missing-art a {
   font-size: 10px;
-  color: #fff7e0;
+  color: var(--shell-accent, var(--color-surface-text-contrast));
   text-decoration: underline;
 }

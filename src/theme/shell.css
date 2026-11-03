@@ -1,4 +1,4 @@
-/* Midnight atelier: shell-only tokens, independent of extracted template colors.
+/* Midnight atelier: application UI tokens, independent of extracted template colors.
    Keep literal colors here so the shell can be rethemed without touching layout. */
 :root {
   --shell-background: #0f172a;
@@ -31,4 +31,12 @@
   --shell-sidebar-glow: rgb(99 102 241 / 10%);
   --shell-indigo-glow: rgb(99 102 241 / 9%);
   --shell-blue-glow: rgb(71 112 145 / 8%);
+  --shell-panel-background:
+    radial-gradient(ellipse at 0% 0%, var(--shell-sidebar-glow), transparent 65%),
+    linear-gradient(
+      165deg,
+      var(--shell-sidebar-start),
+      var(--shell-surface) 65%,
+      var(--shell-sidebar-end)
+    );
 }
