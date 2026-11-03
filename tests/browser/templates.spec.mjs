@@ -167,24 +167,30 @@ test('reference templates, role controls and shuffle use five colors', async ({ 
   await loadArtworkFixture(page, Buffer.from(dataUrl.split(',')[1], 'base64'));
   await expect(page.locator('#swatches code').first()).toBeVisible();
   await page.locator('#method').selectOption('octree-auto');
+  // Visible swatches may still belong to the previous algorithm while its replacement runs.
+  await expect(page.locator('#download-theme')).toBeEnabled();
   await expect(page.locator('#swatches select option[value="tertiary"]')).toHaveCount(0);
   const palette = await page.locator('#swatches code').allTextContents();
   expect(palette).toHaveLength(5);
   const before = await page.locator('[data-role="accent"]').getAttribute('data-swatch-index');
   await page.locator('[data-role="accent"]').selectOption('bg');
-  expect(
-    await page
-      .frameLocator('#templatePreview')
-      .locator('#themeStage')
-      .evaluate((el) => el.style.getPropertyValue('--color-bg')),
-  ).toBe(palette[Number(before)]);
+  await expect
+    .poll(() =>
+      page
+        .frameLocator('#templatePreview')
+        .locator('#themeStage')
+        .evaluate((el) => el.style.getPropertyValue('--color-bg')),
+    )
+    .toBe(palette[Number(before)]);
+  await expect(page.locator('#download-theme')).toBeEnabled();
   const mapping = await page
     .locator('#swatches select')
     .evaluateAll((els) => els.map((el) => el.value));
   await page.locator('#btn-shuffle').click();
-  expect(
-    await page.locator('#swatches select').evaluateAll((els) => els.map((el) => el.value)),
-  ).not.toEqual(mapping);
+  await expect
+    .poll(() => page.locator('#swatches select').evaluateAll((els) => els.map((el) => el.value)))
+    .not.toEqual(mapping);
+  await expect(page.locator('#download-theme')).toBeEnabled();
   expect(await page.locator('#swatches code').allTextContents()).toEqual(palette);
   for (const template of ['landing', 'magazine', 'poster']) {
     await page.locator(`[data-template="${template}"]`).click();
