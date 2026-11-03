@@ -1,6 +1,7 @@
 import type { CommonsImage } from './wikimedia-art.service.js';
 
 export interface ArtworkSelection {
+  source?: 'curated' | 'wikimedia';
   title: string;
   artist: string;
   date: string;

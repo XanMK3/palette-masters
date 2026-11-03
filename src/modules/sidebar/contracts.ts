@@ -10,12 +10,18 @@ export interface SidebarPalette {
 }
 export interface SidebarState {
   readonly selection: Readonly<ArtworkSelection> | null;
+  readonly searchedArtwork?: {
+    readonly item: Readonly<ArtworkSelection>;
+    readonly url: string | null;
+  };
+  readonly palettePending?: boolean;
   readonly palette: SidebarPalette | null;
   readonly assignments: Readonly<RoleAssignments> | null;
   readonly method: PaletteMethod;
   readonly error: string;
 }
 export interface SidebarActions {
+  openSearch?(): void;
   selectPainting(item: ArtworkSelection): void;
   changeMethod(method: PaletteMethod, label: string): void;
   assignRole(role: ThemeRoleKey, index: number): void;

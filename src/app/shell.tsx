@@ -36,8 +36,9 @@ function App({ art, sources, actions, state, connect }: Props) {
     const sidebar = mountSidebar(sidebarRoot.current!, {
       sources,
       actions: {
+        openSearch: () => search.current?.open(),
         selectPainting: (item) => {
-          void actions.selectPainting(item);
+          void actions.selectPainting({ ...item, source: item.source ?? 'curated' });
         },
         changeMethod: (method, label) =>
           controller.current?.sidebarActions.changeMethod(method, label),
@@ -49,7 +50,7 @@ function App({ art, sources, actions, state, connect }: Props) {
     const searchModule = mountWikimediaSearch(dialog.current!, {
       service: art,
       onSelect: (item) => {
-        void actions.selectPainting(item);
+        void actions.selectPainting({ ...item, source: 'wikimedia' });
       },
     });
     search.current = searchModule;
@@ -87,28 +88,17 @@ function App({ art, sources, actions, state, connect }: Props) {
       <dialog id="searchDialog" aria-labelledby="searchTitle" ref={dialog} />
       <main class="workspace">
         <div class="workspace-top">
-          <div>
-            <button
-              class="btn"
-              id="openSearch"
-              type="button"
-              aria-haspopup="dialog"
-              onClick={() => search.current?.open()}
-            >
-              Search Wikimedia
-            </button>
-          </div>
+          <button
+            class="btn"
+            id="download-theme"
+            type="button"
+            disabled={!state.value.canExport}
+            title="Export these colors for any Tailwind v4 project"
+            onClick={() => controller.current?.downloadTheme()}
+          >
+            Download Tailwind v4 theme
+          </button>
           <div class="preview-actions">
-            <button
-              class="btn"
-              id="download-theme"
-              type="button"
-              disabled={!state.value.canExport}
-              title="Export these colors for any Tailwind v4 project"
-              onClick={() => controller.current?.downloadTheme()}
-            >
-              Download Tailwind v4 theme
-            </button>
             <div class="template-tabs" role="tablist" aria-label="Preview template">
               {(['landing', 'magazine', 'poster'] as const).map((id, index) => (
                 <button

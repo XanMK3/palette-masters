@@ -152,6 +152,7 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
                   </div>
                 </button>
                 <select
+                  disabled={state.palettePending}
                   data-swatch-index={index}
                   data-role={role}
                   value={role}
@@ -188,12 +189,76 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
   );
 }
 function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarState }) {
+  const [source, setSource] = useState<'curated' | 'wikimedia'>('curated');
+  useLayoutEffect(() => {
+    if (state.selection?.source) setSource(state.selection.source);
+  }, [state.selection]);
+  const searched = state.searchedArtwork;
+  const active = !!searched && state.selection === searched.item;
   return (
     <>
       <Header />
       <div class="sideinner">
-        <section>
-          <Gallery state={state} sources={sources} actions={actions} />
+        <section class="artwork-browser" aria-label="Artwork browser">
+          <div class="artwork-source-switch" role="group" aria-label="Artwork source">
+            {(['curated', 'wikimedia'] as const).map((value) => (
+              <button
+                type="button"
+                aria-pressed={source === value}
+                onClick={() => setSource(value)}
+              >
+                {value === 'curated' ? 'Curated' : 'Wikimedia'}
+              </button>
+            ))}
+          </div>
+          <div hidden={source !== 'curated'}>
+            <Gallery state={state} sources={sources} actions={actions} />
+          </div>
+          <div hidden={source !== 'wikimedia'}>
+            <button
+              class="btn artwork-search"
+              id="openSearch"
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => actions.openSearch?.()}
+            >
+              Search Wikimedia
+            </button>
+            <div class="searched-artwork">
+              {searched ? (
+                <button
+                  class="searched-preview"
+                  type="button"
+                  aria-pressed={active}
+                  aria-label={
+                    active ? `Selected: ${searched.item.title}` : `Select ${searched.item.title}`
+                  }
+                  onClick={() => {
+                    if (!active) actions.selectPainting(searched.item);
+                  }}
+                >
+                  {searched.url ? (
+                    <ArtworkImage
+                      key={searched.url}
+                      url={searched.url}
+                      title={searched.item.title}
+                    />
+                  ) : (
+                    <div class="noimage" role="status">
+                      Preview not available yet
+                    </div>
+                  )}
+                  <div class="searched-caption">
+                    <strong title={searched.item.title}>{searched.item.title}</strong>
+                    <span title={searched.item.artist}>{searched.item.artist}</span>
+                    <small>{active ? 'Selected' : 'Click to apply palette'}</small>
+                  </div>
+                </button>
+              ) : (
+                <div class="artwork-empty">Search for a painting to get started.</div>
+              )}
+            </div>
+          </div>
         </section>
         <section class="divider" style={{ paddingTop: 18 }} aria-label="Extraction settings">
           <div class="fieldrow">
@@ -224,7 +289,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
                 id="view-pipeline"
                 class="palette-help"
                 type="button"
-                disabled={!state.palette}
+                disabled={!state.palette || state.palettePending}
                 aria-label="How this palette was extracted"
                 title="How this palette was extracted"
                 aria-haspopup="dialog"
@@ -250,7 +315,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
             <button
               id="btn-shuffle"
               type="button"
-              disabled={!state.palette}
+              disabled={!state.palette || state.palettePending}
               onClick={actions.shuffle}
             >
               <ShuffleIcon />
@@ -269,6 +334,9 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
 export function mountSidebar(root: HTMLElement, options: SidebarOptions): SidebarModule {
   let disposed = false;
   const actions: SidebarOptions['actions'] = {
+    openSearch: () => {
+      if (!disposed) options.actions.openSearch?.();
+    },
     selectPainting: (item) => {
       if (!disposed) options.actions.selectPainting(item);
     },

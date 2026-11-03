@@ -21,8 +21,10 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   const { preview, pipeline: pipelineViewer } = ports;
   const lifetime = new AbortController();
   let selection: ArtworkSelection | null = null;
+  let searchedArtwork: { item: ArtworkSelection; url: string | null } | undefined;
   let imageData: ImageData | null = null;
   let error = '';
+  let palettePending = false;
   let methodLabel: string = PRESET_LABELS[DEFAULT_PRESET];
   let palette: PaletteResult | null = null;
   let appliedThemeTokens: Record<string, string> | null = null;
@@ -36,6 +38,11 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   function setImage(url: string | null, title: string, key?: string): void {
     if (lifetime.signal.aborted) return;
     preview.update({ image: { url, title, key } });
+    if (selection?.source === 'wikimedia' && searchedArtwork) {
+      // Keep a durable source: the selection workflow releases blob URLs on replacement.
+      if (!url?.startsWith('blob:')) searchedArtwork = { item: selection, url };
+      renderSidebar();
+    }
   }
   function updatePreviewLabels(item: ArtworkSelection): void {
     preview.update({
@@ -43,25 +50,29 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
       artist: [item.artist, item.date].filter(Boolean).join(' / '),
     });
   }
-  function resetColors(): void {
+  function beginSelection(): void {
     error = '';
     pipelineViewer.dispose();
     runs.cancel();
-    userMapping = false;
-    assignments = null;
-    palette = null;
-    appliedThemeTokens = null;
-    publishShell();
+    palettePending = true;
     imageData = null;
-    preview.update({ tokens: DEFAULT_THEME });
+    publishShell();
     renderSidebar();
   }
   function renderSidebar(): void {
-    ports.updateSidebar({ selection, palette, assignments, method, error });
+    ports.updateSidebar({
+      selection,
+      searchedArtwork,
+      palette,
+      assignments,
+      method,
+      error,
+      palettePending,
+    });
   }
   function updateMapping(keepViewer = false): void {
     if (!keepViewer) pipelineViewer.dispose();
-    if (!palette) return;
+    if (!palette || palettePending) return;
     const { theme } = buildPaletteTheme(
       palette,
       TEMPLATE_USAGE[template],
@@ -88,6 +99,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
         { ...run, captureVisuals: true },
       );
       run.assertCurrent();
+      palettePending = false;
       palette = next;
       userMapping = false;
       assignments = null;
@@ -114,7 +126,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     publishShell();
   }
   function publishShell() {
-    ports.updateShell({ template, canExport: appliedThemeTokens !== null });
+    ports.updateShell({ template, canExport: appliedThemeTokens !== null && !palettePending });
   }
   function changeConfiguration(config: PipelineConfig) {
     if (lifetime.signal.aborted) return;
@@ -126,7 +138,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   }
 
   function openPipeline(chapter: typeof pipelineViewer.chapter = 'sample') {
-    if (lifetime.signal.aborted || !palette || !imageData) return;
+    if (lifetime.signal.aborted || palettePending || !palette || !imageData) return;
     try {
       const { result: theme } = buildPaletteTheme(
         palette,
@@ -140,7 +152,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     }
   }
   function downloadTheme() {
-    if (lifetime.signal.aborted || !appliedThemeTokens) return;
+    if (lifetime.signal.aborted || palettePending || !appliedThemeTokens) return;
     ports.download('theme.css', exportTailwindTheme(appliedThemeTokens), 'text/css;charset=utf-8');
   }
   const sidebarActions: SidebarActions = {
@@ -158,14 +170,14 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     },
     assignRole(role, index) {
       if (lifetime.signal.aborted) return;
-      if (!assignments || !palette) return;
+      if (palettePending || !assignments || !palette) return;
       userMapping = true;
       assignments = reassignRole(assignments, role, index, palette.colors.length);
       updateMapping();
     },
     shuffle() {
       if (lifetime.signal.aborted) return;
-      if (!assignments || !palette) return;
+      if (palettePending || !assignments || !palette) return;
       userMapping = true;
       assignments = shuffleAssignments(assignments, palette.colors.length);
       updateMapping();
@@ -176,7 +188,8 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     error = next;
     renderSidebar();
   }
-  resetColors();
+  preview.update({ tokens: DEFAULT_THEME });
+  renderSidebar();
   setTemplate('landing');
   return {
     sidebarActions,
@@ -186,7 +199,8 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     selectionStarted(item: ArtworkSelection) {
       if (lifetime.signal.aborted) return;
       selection = item;
-      resetColors();
+      if (item.source === 'wikimedia') searchedArtwork = { item, url: null };
+      beginSelection();
       updatePreviewLabels(item);
     },
     showImage: setImage,

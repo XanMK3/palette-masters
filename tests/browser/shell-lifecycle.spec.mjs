@@ -70,9 +70,11 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
     window.fixture.shell = window.fixture.mount();
   });
   await expect(page.locator('#download-theme')).toBeDisabled();
+  await page.getByRole('button', { name: 'Wikimedia', exact: true }).click();
   await page.locator('#openSearch').click();
   await expect(page.locator('#searchDialog')).toBeVisible();
   await page.locator('#closeSearch').click();
+  await page.getByRole('button', { name: 'Curated', exact: true }).click();
   await page.locator('.work').first().click();
   expect(await page.evaluate(() => window.fixture.selected.length)).toBe(1);
 });
@@ -149,5 +151,82 @@ test('workflow instances keep state separate and ignore all intents after dispos
       { method: 'hue-auto', template: 'landing', canExport: false },
     ],
     ignored: true,
+  });
+});
+
+test('painting changes retain the previous theme until replacement pixels arrive', async ({
+  page,
+}) => {
+  await page.route('**/transition-fixture', (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: '<!doctype html><body></body>',
+    }),
+  );
+  await page.goto('/transition-fixture');
+  const result = await page.evaluate(async () => {
+    const { createController } = await import('/src/app/controller.ts');
+    let sidebar, shell;
+    const themes = [];
+    let downloads = 0;
+    const controller = createController(
+      {
+        updateSidebar: (value) => (sidebar = value),
+        updateShell: (value) => (shell = value),
+        preview: {
+          update: (value) => {
+            if (value.tokens) themes.push(value.tokens);
+          },
+        },
+        pipeline: { dispose() {}, preset() {}, open() {}, chapter: 'sample', isOpen: false },
+        download: () => downloads++,
+      },
+      { selectPainting() {} },
+    );
+    const pixels = (color) => {
+      const data = new ImageData(2, 2);
+      for (let i = 0; i < data.data.length; i += 4) data.data.set([...color, 255], i);
+      return data;
+    };
+    controller.selectionStarted({ title: 'First', artist: '', date: '' });
+    controller.pixelsReady(pixels([180, 40, 20]));
+    const oldPalette = sidebar.palette;
+    const oldAssignments = sidebar.assignments;
+    const before = themes.length;
+    controller.selectionStarted({ title: 'Second', artist: '', date: '' });
+    controller.sidebarActions.shuffle();
+    controller.sidebarActions.assignRole('accent', 0);
+    controller.setTemplate('poster');
+    controller.downloadTheme();
+    const pending = {
+      samePalette: sidebar.palette === oldPalette,
+      sameAssignments: sidebar.assignments === oldAssignments,
+      noThemeUpdate: themes.length === before,
+      canExport: shell.canExport,
+      downloads,
+    };
+    // Rapid replacement must also retain the last completed theme.
+    controller.selectionStarted({ title: 'Third', artist: '', date: '' });
+    const noReset = themes.length === before;
+    controller.pixelsReady(pixels([20, 60, 190]));
+    const ready = {
+      newPalette: sidebar.palette !== oldPalette,
+      updates: themes.length - before,
+      canExport: shell.canExport,
+      pending: sidebar.palettePending,
+    };
+    controller.dispose();
+    return { pending, noReset, ready };
+  });
+  expect(result).toEqual({
+    pending: {
+      samePalette: true,
+      sameAssignments: true,
+      noThemeUpdate: true,
+      canExport: false,
+      downloads: 0,
+    },
+    noReset: true,
+    ready: { newPalette: true, updates: 1, canExport: true, pending: false },
   });
 });
