@@ -1,0 +1,34 @@
+/* Midnight atelier: shell-only tokens, independent of extracted template colors.
+   Keep literal colors here so the shell can be rethemed without touching layout. */
+:root {
+  --shell-background: #0f172a;
+  --shell-surface-inset: #10192b;
+  --shell-surface: #111b2e;
+  --shell-surface-raised: #1b283c;
+  --shell-surface-active: #28364b;
+  --shell-sidebar-start: #141f34;
+  --shell-sidebar-end: #142033;
+  --shell-placeholder: #26344a;
+  --shell-placeholder-end: #3b4a60;
+  --shell-border-strong: #475569;
+  --shell-border: #334155;
+  --shell-border-emphasis: #64748b;
+  --shell-text: #e2e8f0;
+  --shell-text-muted: #a3b1c6;
+  --shell-accent: #cbd5e1;
+  --shell-on-accent: #172033;
+  --shell-focus: #c3cede;
+  --shell-swatch-border: #ffffff1c;
+  --shell-swatch-label: #111827;
+  --shell-text-bright: #fff;
+  --shell-overlay-border: #ffffff80;
+  --shell-overlay: #0f172ae6;
+  --shell-shadow: #0008;
+  --shell-backdrop: #0009;
+  --shell-warning-text: #ffdac1;
+  --shell-warning-border: #856e58;
+  --shell-warning-background: #493a31;
+  --shell-sidebar-glow: rgb(99 102 241 / 10%);
+  --shell-indigo-glow: rgb(99 102 241 / 9%);
+  --shell-blue-glow: rgb(71 112 145 / 8%);
+}
