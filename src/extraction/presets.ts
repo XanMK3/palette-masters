@@ -1,18 +1,18 @@
 import type { PipelineConfig, PaletteSize } from './types.js';
 export const PRESET_IDS = [
-  'hue-auto',
   'oklab-kmeans-auto',
+  'hue-auto',
   'octree-auto',
   'slic-samples-farthest',
   'medoids-dominance',
   'edge-medoids-farthest',
 ] as const;
 export type PresetId = (typeof PRESET_IDS)[number];
-export const DEFAULT_PRESET: PresetId = 'hue-auto';
+export const DEFAULT_PRESET: PresetId = PRESET_IDS[0];
 export const PRESET_VERSION = 3;
 export const PRESET_LABELS: Record<PresetId, string> = {
-  'hue-auto': 'Hue groups · Auto selection',
   'oklab-kmeans-auto': 'Oklab K-means · Auto selection',
+  'hue-auto': 'Hue groups · Auto selection',
   'octree-auto': 'Octree · Auto selection',
   'slic-samples-farthest': 'SLIC + Original samples + Farthest',
   'medoids-dominance': 'None + Medoids + Dominance',

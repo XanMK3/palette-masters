@@ -138,7 +138,7 @@ If port 8080 is already taken, see [the alternate-port instructions](docs/TROUBL
 
 ## Color extraction methods
 
-Six deterministic presets combine preprocessing, candidate generation and representative selection. They cover hue groups, Oklab K-means, octree, SLIC samples and medoids, with lightness, dominance or farthest-point selection. Hue groups, Oklab K-means and octree automatically compare two selection policies using theme usability and painting fidelity. SLIC + Original samples + Farthest, None + Medoids + Dominance, and Edge-weighted + Medoids + Farthest remain fixed presets. The default is Hue groups with automatic selection. Additional algorithms remain available through advanced custom composition. See [the extraction guide](docs/COLOR_EXTRACTION.md) for exact combinations, selection policies and the painting-based pipeline story.
+Six deterministic presets combine preprocessing, candidate generation and representative selection. They cover hue groups, Oklab K-means, octree, SLIC samples and medoids, with lightness, dominance or farthest-point selection. Hue groups, Oklab K-means and octree automatically compare two selection policies using theme usability and painting fidelity. SLIC + Original samples + Farthest, None + Medoids + Dominance, and Edge-weighted + Medoids + Farthest remain fixed presets. Additional algorithms remain available through advanced custom composition. See [the extraction guide](docs/COLOR_EXTRACTION.md) for exact combinations, selection policies and the painting-based pipeline story.
 
 Implementation progress for composable, explainable extraction and dominance-based themes is tracked in [the pipeline plan](docs/EXTRACTION_PIPELINE_PLAN.md).
 
