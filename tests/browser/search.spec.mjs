@@ -17,7 +17,7 @@ test('Wikimedia search opens separately from preset browsing and restores focus'
   await opener.click();
   await page.getByRole('button', { name: 'Close search' }).click();
   await expect(page.getByRole('dialog')).not.toBeVisible();
-  await page.getByRole('button', { name: 'Curated', exact: true }).click();
+  await page.getByRole('button', { name: 'Selected art', exact: true }).click();
   await expect(page.locator('#paintings .work').first()).toBeVisible();
 });
 
@@ -73,7 +73,7 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
   await expect(page.locator('.searched-caption')).toContainText('Test painting');
   await expect(page.locator('#download-theme')).toBeEnabled();
   const palette = await page.locator('#swatches').textContent();
-  await source('Curated').click();
+  await source('Selected art').click();
   await expect(page.locator('#movementPicker')).toHaveValue('1');
   await source('Wikimedia').click();
   expect(await page.locator('#swatches').textContent()).toBe(palette);
@@ -90,7 +90,7 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
   await expect(page.locator('#searchQuery')).toHaveValue('Test');
   await page.keyboard.press('Escape');
   await expect(page.locator('#openSearch')).toBeFocused();
-  await source('Curated').click();
+  await source('Selected art').click();
   await page.locator('.work').first().click();
   await source('Wikimedia').click();
   await expect(page.locator('.searched-preview')).toHaveAttribute('aria-pressed', 'false');

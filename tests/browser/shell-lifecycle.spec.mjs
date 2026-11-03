@@ -74,7 +74,7 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
   await page.locator('#openSearch').click();
   await expect(page.locator('#searchDialog')).toBeVisible();
   await page.locator('#closeSearch').click();
-  await page.getByRole('button', { name: 'Curated', exact: true }).click();
+  await page.getByRole('button', { name: 'Selected art', exact: true }).click();
   await page.locator('.work').first().click();
   expect(await page.evaluate(() => window.fixture.selected.length)).toBe(1);
 });

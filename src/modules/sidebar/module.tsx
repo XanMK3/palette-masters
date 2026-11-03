@@ -207,7 +207,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
                 aria-pressed={source === value}
                 onClick={() => setSource(value)}
               >
-                {value === 'curated' ? 'Curated' : 'Wikimedia'}
+                {value === 'curated' ? 'Selected art' : 'Wikimedia'}
               </button>
             ))}
           </div>
