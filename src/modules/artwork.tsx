@@ -25,12 +25,17 @@ export function ArtworkImage({
   url,
   title,
   artworkKey,
+  priority = false,
+  loading = 'lazy',
 }: {
   url: string;
   title: string;
   artworkKey?: string;
+  priority?: boolean;
+  loading?: 'eager' | 'lazy';
 }) {
   const [index, setIndex] = useState(0);
+  const [cors, setCors] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const urls = [
     ...new Set(
@@ -59,14 +64,22 @@ export function ArtworkImage({
       </div>
       {!failed && (
         <img
+          crossorigin={cors ? 'anonymous' : undefined}
+          fetchPriority={priority ? 'high' : 'auto'}
           src={urls[index]}
           alt={title}
           decoding="async"
-          loading="eager"
+          loading={priority ? 'eager' : loading}
           class={loaded ? 'loaded' : ''}
           onLoad={() => setLoaded(true)}
           onError={() => {
             setLoaded(false);
+            // Keep display working on hosts that do not permit pixel access.
+            if (cors) {
+              setCors(false);
+              return;
+            }
+            setCors(true);
             setIndex((value) => value + 1);
           }}
         />

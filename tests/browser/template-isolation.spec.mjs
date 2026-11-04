@@ -80,7 +80,7 @@ test('app CSS is isolated and iframe reload restores the current state', async (
   expect(await page.locator('#tpl-poster').count()).toBe(0);
   await page.locator('#templatePreview').evaluate((el) => el.contentWindow.location.reload());
   await expect(preview.locator('#tpl-poster')).toBeVisible();
-  await expect(preview.locator('#poster-art-name')).toHaveText('Mona Lisa');
+  await expect(preview.locator('#poster-art-name')).toHaveText('Girl with a Pearl Earring');
   await expect(preview.locator('#poster-artwork img')).toHaveClass('loaded');
   expect(await appearance()).toEqual(before);
 });

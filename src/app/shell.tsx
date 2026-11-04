@@ -193,9 +193,31 @@ function App({ art, sources, actions, state, connect }: Props) {
               {(['landing', 'magazine', 'poster'] as const).map((id, index) => (
                 <button
                   key={id}
+                  id={`template-tab-${id}`}
+                  role="tab"
+                  aria-selected={state.value.template === id}
+                  aria-controls="template-panel"
+                  tabIndex={state.value.template === id ? 0 : -1}
                   data-template={id}
                   class={state.value.template === id ? 'active' : ''}
                   onClick={() => controller.current?.setTemplate(id)}
+                  onKeyDown={(event) => {
+                    const tabs = ['landing', 'magazine', 'poster'] as const;
+                    const next =
+                      event.key === 'ArrowRight'
+                        ? (index + 1) % tabs.length
+                        : event.key === 'ArrowLeft'
+                          ? (index + tabs.length - 1) % tabs.length
+                          : event.key === 'Home'
+                            ? 0
+                            : event.key === 'End'
+                              ? tabs.length - 1
+                              : null;
+                    if (next === null) return;
+                    event.preventDefault();
+                    controller.current?.setTemplate(tabs[next]);
+                    document.getElementById(`template-tab-${tabs[next]}`)?.focus();
+                  }}
                 >
                   {['Landing', 'Article', 'Poster'][index]}
                 </button>
@@ -203,7 +225,12 @@ function App({ art, sources, actions, state, connect }: Props) {
             </div>
           </div>
         </div>
-        <div class="stage-area">
+        <div
+          class="stage-area"
+          id="template-panel"
+          role="tabpanel"
+          aria-labelledby={`template-tab-${state.value.template}`}
+        >
           <iframe
             id="templatePreview"
             class="preview-scroll"

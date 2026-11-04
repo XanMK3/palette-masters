@@ -40,6 +40,8 @@ export function imgElement(url: string, alt: string, key?: string): HTMLElement 
   image.alt = alt;
   image.decoding = 'async'; // eager: don't leave gallery cards pending offscreen
   image.loading = 'eager';
+  image.fetchPriority = 'auto'; // Poster may be hidden in the initial template.
+  image.crossOrigin = 'anonymous';
   image.onload = () => {
     image.classList.add('loaded');
     waiting.hidden = true;
@@ -56,8 +58,14 @@ export function imgElement(url: string, alt: string, key?: string): HTMLElement 
   }
   let index = 0;
   image.onerror = () => {
+    if (image.crossOrigin) {
+      image.removeAttribute('crossorigin');
+      image.src = urls[index];
+      return;
+    }
     index++;
     if (index < urls.length) {
+      image.crossOrigin = 'anonymous';
       image.src = urls[index];
       return;
     }

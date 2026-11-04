@@ -4,8 +4,7 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import '@fontsource/inter/800.css';
 import { WikimediaArtService } from './wikimedia-art.service.js';
-import { FEATURED_MOVEMENTS } from './featured-collections.js';
-import { FEATURED_IMAGE_FILENAMES } from './featured-images.js';
+import { INITIAL_ARTWORK } from './initial-artwork.js';
 import { createArtworkSources } from './artwork-sources.js';
 import { createImageSelection } from './image-selection.js';
 import { createAppShell } from './app/index.js';
@@ -17,11 +16,7 @@ const ui = createAppShell(document.querySelector<HTMLElement>('.shell')!, art, s
   selectPainting: (item) => images.selectPainting(item),
 });
 const images = createImageSelection(art, sources, ui);
-const initial = FEATURED_MOVEMENTS.find((movement) => movement.id === 'renaissance')!.paintings[0];
-void images.selectPainting({
-  ...initial,
-  filename: FEATURED_IMAGE_FILENAMES[initial.wikipediaTitle],
-});
+void images.selectPainting(INITIAL_ARTWORK);
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {

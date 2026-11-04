@@ -4,6 +4,7 @@ import { ArtworkImage, ImageError } from '../artwork.js';
 import { Header, ShuffleIcon } from './header.js';
 import { createPaintingAnimation } from './painting-animation.js';
 import { DEFAULT_PAINTINGS, FEATURED_MOVEMENTS } from '../../featured-collections.js';
+import { INITIAL_ARTWORK } from '../../initial-artwork.js';
 import { DEFAULT_PRESET, PRESET_IDS, PRESET_LABELS } from '../../extraction/presets.js';
 import { ROLE_KEYS, type ThemeRoleKey } from '../../theme.service.js';
 import type { ArtworkSelection } from '../../artwork-selection.js';
@@ -40,7 +41,14 @@ function PaintingImage({
   }, [work.wikipediaTitle, sources, direct]);
   const url = direct || resolved?.url;
   return url ? (
-    <ArtworkImage key={url} url={url} title={work.title} artworkKey={work.wikipediaTitle} />
+    <ArtworkImage
+      key={url}
+      url={url}
+      title={work.title}
+      artworkKey={work.wikipediaTitle}
+      priority={work.wikipediaTitle === INITIAL_ARTWORK.wikipediaTitle}
+      loading="eager"
+    />
   ) : resolved?.error ? (
     <ImageError label={resolved.error} artworkKey={work.wikipediaTitle} />
   ) : (
@@ -152,6 +160,7 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
                   </div>
                 </button>
                 <select
+                  id={`palette-role-${index + 1}`}
                   disabled={state.palettePending}
                   data-swatch-index={index}
                   data-role={role}
@@ -177,7 +186,11 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
               <div class="swatch">
                 <div class="pigment" />
               </div>
-              <select disabled aria-label={`Role for color ${index + 1}`}>
+              <select
+                id={`palette-role-${index + 1}`}
+                disabled
+                aria-label={`Role for color ${index + 1}`}
+              >
                 <option>—</option>
               </select>
             </div>
