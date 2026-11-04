@@ -25,7 +25,7 @@ test('poster follows selected artwork and renders all five exact palette colors'
   );
   await expect(
     page.frameLocator('#templatePreview').locator('#poster-artwork img'),
-  ).toHaveAttribute('alt', 'Mona Lisa');
+  ).toHaveAttribute('alt', 'Girl with a Pearl Earring');
   await expect(page.frameLocator('#templatePreview').locator('#poster-swatch-row')).toHaveCount(0);
   const verifyColors = async () => {
     const actual = await page

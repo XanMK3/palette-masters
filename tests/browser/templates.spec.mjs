@@ -71,7 +71,7 @@ test('artwork, extraction controls and all previews remain connected', async ({ 
     await page.locator(`[data-template="${template}"]`).click();
     expect(await textContrastFailures(page)).toEqual([]);
     await expect(page.frameLocator('#templatePreview').locator('#poster-art-name')).toHaveText(
-      'Mona Lisa',
+      'Girl with a Pearl Earring',
     );
   }
 });
