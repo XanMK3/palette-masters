@@ -201,29 +201,43 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
       <div class="sideinner">
         <section class="artwork-browser" aria-label="Artwork browser">
           <div class="artwork-source-switch" role="group" aria-label="Artwork source">
-            {(['curated', 'wikimedia'] as const).map((value) => (
-              <button
-                type="button"
-                aria-pressed={source === value}
-                onClick={() => setSource(value)}
+            <button
+              type="button"
+              aria-pressed={source === 'curated'}
+              onClick={() => setSource('curated')}
+            >
+              Selected art
+            </button>
+            <button
+              class="artwork-search"
+              id="openSearch"
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => {
+                if (searched) setSource('wikimedia');
+                actions.openSearch?.();
+              }}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                aria-hidden="true"
               >
-                {value === 'curated' ? 'Selected art' : 'Wikimedia'}
-              </button>
-            ))}
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              Wikimedia
+            </button>
           </div>
           <div hidden={source !== 'curated'}>
             <Gallery state={state} sources={sources} actions={actions} />
           </div>
           <div hidden={source !== 'wikimedia'}>
-            <button
-              class="btn artwork-search"
-              id="openSearch"
-              type="button"
-              aria-haspopup="dialog"
-              onClick={() => actions.openSearch?.()}
-            >
-              Search Wikimedia
-            </button>
             <div class="searched-artwork">
               {searched ? (
                 <button
