@@ -18,6 +18,18 @@ Visit **http://127.0.0.1:8080/**. To stop the server, press Ctrl+C. On Windows, 
 
 Development uses Vite with automatic reloads. For production, run `npm run build` and deploy `dist/`. Use `npm run preview` to check that build locally (stop the dev server first). The build now emits HTML and bundled assets rather than a standalone HTML file.
 
+### Deploy to GitHub Pages
+
+In the GitHub repository, open **Settings → Pages → Build and deployment** and
+set **Source** to **GitHub Actions**. Merge `.github/workflows/deploy-pages.yml`
+into `master`. Every push to `master` (including merged pull requests) then
+installs dependencies with `npm ci`, builds the app, and publishes `dist/`.
+You can also run the workflow manually from the Actions tab on `master`.
+
+Vite uses relative asset URLs (`base: './'`), so the build supports the repository's
+GitHub Pages subpath. The deployment URL appears in the workflow's `github-pages`
+environment. No personal access token is required.
+
 ### If thumbnails are absent
 
 The distributed source **does not include real artwork image bytes**. The featured gallery uses remote Wikimedia URLs by default; these may be blocked or out of date. On a laptop with internet, cache the pinned Commons images into the app bundle:
