@@ -142,7 +142,7 @@ test('default theme and responsive compositions stay readable', async ({ page },
 
 test('reference templates, role controls and shuffle use five colors', async ({ page }) => {
   await expect(page.frameLocator('#templatePreview').locator('#tpl-landing')).toContainText(
-    'Aura Analytics',
+    'Palette masters',
   );
   await expect(page.frameLocator('#templatePreview').locator('#tpl-magazine')).toContainText(
     'Extracting Palette Harmonies from Wikimedia Masterpieces',
