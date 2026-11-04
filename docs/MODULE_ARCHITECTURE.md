@@ -1,149 +1,166 @@
-# Module boundaries
+# Architecture
 
-The six-stage module migration is complete. Shell, sidebar and Wikimedia search render
-with Preact behind their existing public APIs. Shell and search use private
-Signals instances; sidebar components keep interaction state in hooks.
+Palette Masters is a browser application with three execution contexts: a Preact
+application shell, a Web Worker for palette computation, and a same-origin iframe
+for template previews. Vite builds `index.html`, `preview.html`, and the worker.
+There is no application backend; artwork metadata and images come from Wikimedia
+or bundled image sources.
 
-| Owner / public entry | State and responsibility | Contract |
-| --- | --- | --- |
-| `src/app/index.ts` | Selected artwork, raster, palette, assignments, extraction configuration, current template, workflow coordination | `createAppShell(root, art, sources, actions)` returns `AppShell`: image-selection output methods plus `dispose()` |
-| `src/modules/sidebar/index.ts` | Gallery movement, expanded painting, controls and swatch rendering | `mountSidebar(root, options)` returns `update(SidebarState)` and `dispose()`; typed callbacks report user intents |
-| `src/modules/wikimedia-search/index.ts` | Dialog, query, results, debounce, requests and cancellation | `mountWikimediaSearch(dialog, { service, onSelect })` returns `open()`, `close()`, `dispose()` |
-| `src/pipeline-viewer/index.ts` | Visualization, playback, chapter and viewer DOM | Existing `PipelineViewer.open(data, image, controls, chapter)`, `close()`, `dispose()`, `chapter`, `isOpen` |
-| `src/templates/bridge.ts` | Preview state and iframe messaging lifecycle | `createTemplatePreview(frame)` returns `update(Partial<PreviewState>)` and `dispose()`; renderer consumes `PreviewState` |
+## Module map
 
-Sidebar and search each have a public `index.ts`, typed `contracts.ts`, private
-`module.tsx`, and private components. Their DOM queries stay inside the supplied
-root. The shell supplies the aside/dialog host elements; the modules render
-and unmount their Preact contents. Each module can mount with fixture services and
-callbacks without the shell or its siblings. Shared presentation styles remain
-in `index.html` as the shared application design system. Existing IDs support one instance of each module per application.
+The diagram shows runtime communication. The shell mounts the UI modules and
+adapters; the controller coordinates their work through typed ports.
 
-## Shell implementation
+```mermaid
+flowchart TB
+  subgraph main[Main browser document]
+    Bootstrap["app.ts: bootstrap"]
+    Shell["app/shell.tsx: Preact shell"]
+    Sidebar["modules/sidebar: gallery and palette controls"]
+    Search["modules/wikimedia-search: search dialog"]
+    Images["image-selection.ts: loading and pixel access"]
+    Sources["artwork-sources.ts: featured image cache"]
+    Service["wikimedia-art.service.ts"]
+    Controller["app/controller.ts: workflow state"]
+    Client["computation/client.ts: worker lifecycle"]
+    Bridge["templates/bridge.ts: preview messaging"]
+    Viewer["app/pipeline-adapter.ts and pipeline-viewer"]
+    Export["theme/export.ts and app/download.ts"]
+  end
+  subgraph worker[Web Worker]
+    Compute["computation/worker.ts"]
+    Extract["palette.service.ts and extraction/"]
+    Theme["theme/pipeline.ts: mapping and validation"]
+    Compute --> Extract
+    Compute --> Theme
+  end
+  subgraph frame[Preview iframe]
+    Renderer["templates/preview.ts"]
+    Templates["Landing, magazine, poster HTML and CSS"]
+    Renderer --> Templates
+  end
+  Wikimedia["Wikimedia APIs and image hosts"]
+  Bootstrap --> Shell
+  Bootstrap --> Images
+  Shell --> Sidebar
+  Shell --> Search
+  Shell --> Controller
+  Sidebar -->|selection via app callback| Images
+  Search -->|selection via app callback| Images
+  Sidebar -->|method and role intents| Controller
+  Images -->|callbacks through shell| Controller
+  Sidebar --> Sources
+  Images --> Sources
+  Sources --> Service
+  Images --> Service
+  Search --> Service
+  Service --> Wikimedia
+  Controller -->|view state| Sidebar
+  Controller --> Client
+  Client <-->|requests and results| Compute
+  Controller --> Bridge
+  Bridge <-->|state and ready handshake| Renderer
+  Controller -->|results and raster| Viewer
+  Viewer -->|configuration changes| Controller
+  Controller --> Export
+```
 
-`src/app/shell.tsx` renders the toolbar, template tabs, iframe element and empty
-sidebar/search host elements. Preact never renders children inside those module
-hosts or inside the iframe. A layout effect mounts the modules and connects the
-workflow before `createAppShell` returns, preserving synchronous image-selection
-callbacks. Stable references keep module instances alive across shell rerenders.
+## Ownership and contracts
 
-`src/app/controller.ts` owns extraction and theme workflow state. It sends typed
-outputs through `ports.ts` rather than querying shell elements or changing their
-properties. The shell's private signal holds the selected template and export
-availability; it is created per mount, never shared as a global store.
+| Module / entry | Responsibility and public contract |
+| --- | --- |
+| `src/app.ts` | Creates the Wikimedia service, shared artwork sources, shell, and image-selection workflow; selects the initial painting. |
+| `src/app/index.ts` | Exports `createAppShell(root, art, sources, actions)`. The returned `AppShell` exposes `selectionStarted`, `showImage`, `pixelsReady`, and `dispose`. |
+| `src/app/controller.ts` | Owns selected artwork and raster, extraction configuration, palette, role assignments, theme tokens, current template, pending state, and errors. Uses `ControllerPorts` for computation and UI output. |
+| `src/modules/sidebar/index.ts` | `mountSidebar(root, options)` returns `update(SidebarState)` and `dispose`. Owns gallery navigation and expansion animation; callbacks report selection, method, role, shuffle, and viewer intents. |
+| `src/modules/wikimedia-search/index.ts` | `mountWikimediaSearch(dialog, { service, onSelect })` returns `open`, `close`, and `dispose`. Owns debounced Wikidata suggestions, paginated Commons results, image preloading, and cancellation. |
+| `src/image-selection.ts` | Owns image loading, pixel access, stale-selection guards, and displayed blob URL lifetime. Reports progress through `SelectionView`. |
+| `src/computation/client.ts` | `createComputation()` returns `run`, `cancel`, and `dispose`. Owns worker creation, request IDs, transfer of raster copies, and worker termination. |
+| `src/app/pipeline-adapter.ts` | Connects advanced extraction controls to the controller and wraps the imperative `PipelineViewer`; manages viewer focus and cleanup. |
+| `src/templates/bridge.ts` | `createTemplatePreview(frame)` returns `update(Partial<PreviewState>)` and `dispose`; retains state until the iframe is ready. |
+| `src/templates/preview.ts` | Validates incoming preview state, applies tokens, switches templates, and updates artwork inside the iframe. |
+| `src/app/download.ts` | Saves the Tailwind stylesheet generated by `src/theme/export.ts` and releases download object URLs. |
 
-`src/app/pipeline-adapter.ts` manages the existing imperative viewer and advanced
-controls, including focus restoration and cleanup. The viewer's implementation
-remains independent of Preact. The existing preview bridge receives updates and
-owns iframe messaging. On unmount, the shell disposes the controller, all modules,
-the viewer adapter, and the bridge; subsequent callbacks on the old public shell
-handle are ignored.
+The shell and search use per-mount Signals; sidebar interaction state uses Preact
+hooks. The shell owns the sidebar/dialog host elements, while each module renders
+its own Preact root. A layout effect connects the controller before shell creation
+returns, so image-selection callbacks can run immediately.
 
-## Data flow
+The controller's sidebar contract exposes read-only colors and swatch IDs. It
+currently passes the palette object structurally through that narrowed type;
+this is a TypeScript boundary, not a copied or frozen runtime object. Sidebar
+code does not consume extraction provenance. UI modules communicate through
+callbacks and public entry points rather than sibling DOM or a global store.
 
-1. Sidebar or search emits an artwork selection intent.
-2. The shell forwards it to the existing image-selection workflow, which owns
-   loading, stale-result protection and image URL lifetime.
-3. That workflow calls the shell's `selectionStarted`, `showImage` and
-   `pixelsReady` methods.
-4. The shell invokes extraction and theme services, passes palette state to the
-   sidebar, and sends artwork/theme state through the template bridge.
-5. Sidebar method, role and shuffle intents return to the shell. The sidebar
-   neither runs extraction nor mutates shared assignments.
-6. The shell passes extraction results to the existing pipeline viewer on demand.
-   Advanced extraction controls remain shell-managed integration with that viewer.
+## Selection and computation
 
-Modules do not import sibling implementations or reach into sibling DOM. Shared
-services and data types stay framework-independent. Consumers should import UI
-modules only through their public entry points. No global mutable UI store or
-event bus is introduced.
+1. A gallery or search selection reaches the image-selection workflow through the
+   app callback. Search preloads its selected image before emitting the intent.
+2. Image selection cancels the previous selection, shows an available image URL,
+   and reads pixels through the Wikimedia service. Shared featured lookups are
+   cached by `artwork-sources.ts`.
+3. The controller receives pixels through the shell and submits an extraction
+   request. The worker fingerprints the raster, runs extraction and preset
+   comparisons, captures visual history, and maps the palette to theme tokens.
+4. The controller accepts only current results and updates sidebar state, export
+   availability, and preview tokens. Palette provenance and the original raster
+   remain available for the pipeline viewer.
+5. Role edits and shuffles request theme mapping from existing swatches. Template
+   changes remap when required; a switch during extraction remaps the completed
+   palette before publishing. Method or advanced-configuration changes rerun
+   extraction.
 
-## Lifetimes
+The worker starts lazily and is reused while idle. Superseding busy work terminates
+it; request IDs and controller revisions reject late results. A transferred copy
+keeps the original raster available on the main thread. There is no synchronous
+UI fallback for worker failure.
 
-The application entry owns image selection and the shell, and disposes both on
-Vite hot replacement. The shell disposes its modules, viewer, run manager and
-iframe bridge. Module disposal is idempotent. Sidebar disposal disconnects its
-resize observer, cancels animations, removes controls and invalidates pending
-thumbnail completions. Featured lookups use the existing shared cache; disposing
-a sidebar ignores their results rather than cancelling shared service work.
+While work is pending, previous colors remain visible but export, role editing,
+and viewer opening are disabled. Computation errors preserve those colors and
+allow retry through another painting or method. Advanced-control results refresh
+an open viewer without reopening one the user closed.
 
-Search aborts queries and detail/artist requests on a new intent, close or
-disposal, clears its debounce timer, and checks cancellation after asynchronous
-results. Late responses cannot select an artwork after the dialog closes.
+## Preview and styling
 
-The iframe renderer and pipeline viewer retain their existing implementation.
-The parent iframe bridge handles listener cleanup. The obsolete `app-ui.ts`
-compatibility adapter has been removed; application bootstrap uses `app/index.ts`.
+The preview uses `./preview.html` and receives state through `postMessage`.
+Both sides check message origin and source; the renderer also validates the state
+shape. A ready/hello handshake sends the latest state after initial load or reload.
+The iframe isolates template styles, fonts, icons, and responsive layout from the
+application shell. Its renderer uses direct DOM updates rather than Preact.
+
+Application styles live in `index.html`, `src/theme/shell.css`, and component CSS
+files. Preview styles are loaded through `src/templates/`; the Tailwind color
+contract is in `src/theme/tailwind.css`. Shared artwork rendering has separate
+Preact and DOM helpers for the application and iframe.
+
+## Cleanup
+
+Vite hot replacement disposes image selection and the shell. Shell unmounting
+cleans up the controller and its worker, sidebar, search, viewer adapter, preview
+bridge, and download adapter. Disposed shell callbacks no longer reach a controller.
+
+Image selection aborts pending work and releases displayed blob URLs. Search
+aborts suggestions, result requests, and image preloads on cancellation or close.
+Sidebar cleanup removes animation resources and ignores late thumbnail results;
+shared featured lookups remain reusable rather than being cancelled by one view.
 
 ## Verification
 
-`tests/browser/module-boundaries.spec.mjs` mounts sidebar and search in a blank
-same-origin page with stub services. It covers selection and method callbacks,
-state updates, cleanup/remounting, stale query responses, cancelled detail
-selection and successful selection through the public callback. Existing unit
-and browser suites cover extraction, themes, galleries, preview and viewer
-behavior across the complete application.
+Existing tests cover these boundaries:
 
-`tests/browser/shell-lifecycle.spec.mjs` mounts the Preact shell with fixture
-services, supplies pixels immediately after mounting, checks stable module DOM
-through toolbar updates, opens the viewer, and verifies disposal and remounting.
+- `tests/browser/module-boundaries.spec.mjs`: isolated sidebar mounting, intents,
+  updates, and cleanup.
+- `tests/browser/shell-lifecycle.spec.mjs`: stable module hosts, independent
+  workflow instances, disposal, and retaining the previous theme during loading.
+- `tests/browser/computation.spec.mjs`: worker parity, cancellation, stale results,
+  template remapping, failure recovery, and UI responsiveness during computation.
+- `tests/browser/search.spec.mjs` and `search-autocomplete.spec.mjs`: search and
+  suggestion behavior.
+- `tests/browser/template-isolation.spec.mjs` and `theme-export.spec.mjs`: iframe
+  isolation and exported theme behavior.
+- `tests/image-selection.test.mjs` and `download.test.mjs`: image and download
+  lifecycle behavior.
 
-## Module rendering
-
-The sidebar contains private gallery, image, swatch and header components. State
-updates preserve keyed cards and loaded images. Its public `update` still applies
-state synchronously. The expansion animation owns a dedicated empty host inside
-the gallery; only that adapter creates cloned image/animation DOM and it cleans
-up on movement changes and unmounting. Extraction presets are rendered from the
-shared preset IDs and labels, verified by the isolated browser test.
-
-Search owns reactive query, result and artist-work views. Its native dialog stays
-under the public open/close lifecycle, preserving focus and Escape behavior.
-Request cancellation and stale-response guards remain independent of rendering.
-Both modules use a Preact artwork component with native image loading, fallback
-URLs and Commons source links. The iframe renderer keeps its framework-independent
-image helper. Sidebar and search no longer inject static HTML templates.
-
-## Final state boundaries
-
-The controller alone owns the selected raster, extraction results, role assignments
-and theme tokens. The sidebar receives a read-only projection of palette colors
-and swatch identities, not the extraction result or its mutable provenance. Its
-callbacks request changes; modules never import a global store. Search owns its
-query/results/request lifetime, while the gallery owns movement and animation
-state. Services remain independent of Preact.
-
-Controller ports describe only the operations needed by the workflow. Browser
-downloads are handled by a shell-owned adapter that revokes pending object URLs
-on disposal. Disposed controllers ignore subsequent UI and image callbacks.
-Public entry points export the viewer and preview contract types, so adapters
-need not import their implementation files.
-
-The browser suite checks current catalog content, public labels and iframe output.
-Former stale assertions for a removed credit element, old catalog counts and
-the old download label have been replaced with current behavior checks.
-
-## Asynchronous palette computation
-
-The shell creates one `createComputation()` adapter and injects it through
-`ControllerPorts.computation`. The controller owns its cancellation/disposal.
-The adapter lazily starts a Vite-bundled worker, reuses it while idle, and terminates
-a busy worker when superseded. Request IDs plus controller revisions reject stale
-results even across worker replacement. No synchronous fallback runs in the UI.
-
-The worker owns raster fingerprinting, extraction, automatic preset comparisons,
-visual-history capture, and theme mapping. A transferred copy preserves the main
-thread's original pixels for the viewer. Mapping requests send only swatches,
-template ID and optional manual assignments, without rerunning extraction.
-Completed provenance and theme data are cached in the controller for the viewer.
-
-While computation is pending, the previous theme/swatches remain visible, and
-export, role editing and viewer opening are disabled. Accepted results replace
-palette, assignments and tokens together. A template change during extraction
-remaps the completed palette before publishing it. Errors preserve the previous
-appearance; another painting or algorithm retries. Advanced-control updates refresh
-the viewer only if it remains open, preserving its current chapter and focus.
-
-`tests/browser/computation.spec.mjs` checks worker parity across all presets,
-mapping, raster ownership, cancellation, recovery, and animation-frame advancement
-during real worker computation. Controller tests also cover delayed/stale replies.
+Run `npm test` for unit tests and `npm run test:browser` for browser tests
+(requires Google Chrome). See [color extraction](COLOR_EXTRACTION.md) for pipeline
+details.
