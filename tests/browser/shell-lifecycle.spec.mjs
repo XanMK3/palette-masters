@@ -70,7 +70,6 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
     window.fixture.shell = window.fixture.mount();
   });
   await expect(page.locator('#download-theme')).toBeDisabled();
-  await page.getByRole('button', { name: 'Wikimedia', exact: true }).click();
   await page.locator('#openSearch').click();
   await expect(page.locator('#searchDialog')).toBeVisible();
   await page.locator('#closeSearch').click();

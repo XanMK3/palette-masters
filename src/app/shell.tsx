@@ -1,5 +1,5 @@
 import { render } from 'preact';
-import { useLayoutEffect, useRef } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { signal, type Signal } from '@preact/signals';
 import { mountSidebar } from '../modules/sidebar';
 import { mountWikimediaSearch } from '../modules/wikimedia-search';
@@ -23,6 +23,34 @@ interface Props {
 }
 
 function App({ art, sources, actions, state, connect }: Props) {
+  const [downloadOpen, setDownloadOpen] = useState(false);
+  const downloadRoot = useRef<HTMLDivElement>(null);
+  const downloadButton = useRef<HTMLButtonElement>(null);
+  const downloadOption = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!downloadOpen) return;
+    downloadOption.current?.focus();
+    const closeOutside = (event: PointerEvent) => {
+      if (!downloadRoot.current?.contains(event.target as Node)) setDownloadOpen(false);
+    };
+    // Preview clicks belong to the iframe document and do not bubble to the shell.
+    const previewFrame = frame.current;
+    let previewDocument: Document | null = null;
+    const closeFromPreview = () => setDownloadOpen(false);
+    const listenToPreview = () => {
+      previewDocument?.removeEventListener('pointerdown', closeFromPreview, true);
+      previewDocument = previewFrame?.contentDocument ?? null;
+      previewDocument?.addEventListener('pointerdown', closeFromPreview, true);
+    };
+    listenToPreview();
+    previewFrame?.addEventListener('load', listenToPreview);
+    document.addEventListener('pointerdown', closeOutside, true);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside, true);
+      previewFrame?.removeEventListener('load', listenToPreview);
+      previewDocument?.removeEventListener('pointerdown', closeFromPreview, true);
+    };
+  }, [downloadOpen]);
   const sidebarRoot = useRef<HTMLElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -90,16 +118,76 @@ function App({ art, sources, actions, state, connect }: Props) {
       <dialog id="searchDialog" aria-labelledby="searchTitle" ref={dialog} />
       <main class="workspace">
         <div class="workspace-top">
-          <button
-            class="btn"
-            id="download-theme"
-            type="button"
-            disabled={!state.value.canExport}
-            title="Export these colors for any Tailwind v4 project"
-            onClick={() => controller.current?.downloadTheme()}
+          <div
+            class="download-dropdown"
+            ref={downloadRoot}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                setDownloadOpen(false);
+              }
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                setDownloadOpen(false);
+                downloadButton.current?.focus();
+              }
+            }}
           >
-            Download Tailwind v4 theme
-          </button>
+            <button
+              class="btn"
+              id="download-theme"
+              ref={downloadButton}
+              type="button"
+              disabled={!state.value.canExport}
+              title="Download theme"
+              aria-label="Download theme"
+              aria-expanded={downloadOpen && state.value.canExport}
+              aria-controls="download-options"
+              onClick={() => setDownloadOpen(!downloadOpen)}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            {downloadOpen && state.value.canExport && (
+              <div class="download-options" id="download-options">
+                <button
+                  type="button"
+                  ref={downloadOption}
+                  onClick={() => {
+                    controller.current?.downloadTheme();
+                    setDownloadOpen(false);
+                    downloadButton.current?.focus();
+                  }}
+                >
+                  Tailwind v4 theme
+                </button>
+              </div>
+            )}
+          </div>
           <div class="preview-actions">
             <div class="template-tabs" role="tablist" aria-label="Preview template">
               {(['landing', 'magazine', 'poster'] as const).map((id, index) => (
@@ -109,7 +197,7 @@ function App({ art, sources, actions, state, connect }: Props) {
                   class={state.value.template === id ? 'active' : ''}
                   onClick={() => controller.current?.setTemplate(id)}
                 >
-                  {['SaaS landing', 'Magazine article', 'Art poster'][index]}
+                  {['Landing', 'Article', 'Poster'][index]}
                 </button>
               ))}
             </div>
