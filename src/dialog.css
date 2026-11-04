@@ -1,0 +1,119 @@
+dialog.app-dialog {
+  box-sizing: border-box;
+  width: min(640px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  color: var(--shell-text);
+  background: var(--shell-panel-background);
+  border: 1px solid var(--shell-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 80px var(--shell-shadow);
+}
+dialog.app-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.app-dialog::backdrop {
+  background: var(--shell-backdrop);
+}
+dialog.search-dialog {
+  height: min(640px, calc(100dvh - 48px));
+}
+dialog.pipeline-viewer {
+  width: min(1040px, calc(100vw - 32px));
+}
+.app-dialog .dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--shell-border);
+}
+.dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+}
+.app-dialog .dialog-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--shell-text);
+  cursor: pointer;
+}
+.app-dialog .dialog-close:hover {
+  background: var(--shell-surface-raised);
+  border-color: var(--shell-border-emphasis);
+}
+.app-dialog .dialog-close:focus-visible {
+  outline: 3px solid var(--shell-focus);
+  outline-offset: 2px;
+}
+.dialog-close svg {
+  width: 18px;
+  height: 18px;
+}
+.app-dialog .dialog-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 18px 22px;
+}
+.search-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.search-view > .searchbox,
+.search-view > p {
+  flex-shrink: 0;
+  margin-left: 22px;
+  margin-right: 22px;
+}
+.search-view > p {
+  margin-top: 0;
+}
+.search-view .search-body {
+  flex: 1;
+  padding-top: 4px;
+}
+.dialog-header nav {
+  min-width: 0;
+}
+@media (max-width: 650px) {
+  dialog.app-dialog {
+    max-width: calc(100vw - 16px);
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+  dialog.search-dialog {
+    height: min(640px, calc(100dvh - 16px));
+  }
+  .app-dialog .dialog-header {
+    padding: 12px;
+    gap: 6px;
+  }
+  .app-dialog .dialog-body {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .search-view > .searchbox,
+  .search-view > p {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+}

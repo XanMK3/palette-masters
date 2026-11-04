@@ -4,6 +4,8 @@ import { ArtworkImage } from '../artwork.js';
 import type { ArtworkSelection } from '../../artwork-selection.js';
 import type { WikidataSearchHit } from '../../wikimedia-art.service.js';
 import type { SearchModule, SearchOptions } from './contracts.js';
+import '../../dialog.css';
+import { CLOSE_ICON_PATH } from '../../dialog-icon.js';
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 function Result({
@@ -31,6 +33,7 @@ export function mountWikimediaSearch(
   root: HTMLDialogElement,
   { service: art, onSelect }: SearchOptions,
 ): SearchModule {
+  root.classList.add('app-dialog', 'search-dialog');
   const query = signal('');
   const results = signal<ComponentChildren>(
     <div class="tiny">Search by artist name or painting title.</div>,
@@ -199,19 +202,29 @@ export function mountWikimediaSearch(
   function Search() {
     return (
       <>
-        <div class="search-heading">
+        <header class="dialog-header">
           <h2 id="searchTitle">Search Wikimedia</h2>
           <button
-            class="btn"
+            class="dialog-close"
             id="closeSearch"
             type="button"
             aria-label="Close search"
             onClick={close}
           >
-            Close
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d={CLOSE_ICON_PATH} />
+            </svg>
           </button>
-        </div>
-        <div id="searchView">
+        </header>
+        <div id="searchView" class="search-view">
           <form
             class="searchbox"
             id="searchForm"
@@ -240,14 +253,16 @@ export function mountWikimediaSearch(
             />
             <button class="btn primary">Find</button>
           </form>
-          <p class="tiny">
-            Wikidata entities + Commons images. Some image files may not represent paintings.
-          </p>
-          <div id="searchResults" class="searchResults">
-            {results.value}
-          </div>
-          <div class={`workspanel${artistWorks.value === null ? ' hidden' : ''}`} id="artistWorks">
-            {artistWorks.value}
+          <div class="dialog-body search-body">
+            <div id="searchResults" class="searchResults">
+              {results.value}
+            </div>
+            <div
+              class={`workspanel${artistWorks.value === null ? ' hidden' : ''}`}
+              id="artistWorks"
+            >
+              {artistWorks.value}
+            </div>
           </div>
         </div>
       </>

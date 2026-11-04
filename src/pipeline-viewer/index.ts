@@ -3,6 +3,9 @@ import { createStory, resolveFrame, chapterNames, type Chapter } from './story.j
 import { PaintingView } from './painting.js';
 import { StoryPlayer } from './player.js';
 import './viewer.css';
+import '../dialog.css';
+import { CLOSE_ICON_PATH } from '../dialog-icon.js';
+
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, text?: string) {
   const node = document.createElement(tag);
   if (text !== undefined) node.textContent = text;
@@ -12,7 +15,7 @@ const rgb = (value: readonly number[]) => `rgb(${value.join(',')})`;
 const hex = (value: readonly number[]) =>
   '#' + value.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
 const icons: Record<string, string> = {
-  Close: '<path d="m6 6 12 12M18 6 6 18"/>',
+  Close: `<path d="${CLOSE_ICON_PATH}"/>`,
   Play: '<path d="m8 5 11 7-11 7Z"/>',
   Pause: '<path d="M8 5v14M16 5v14"/>',
   Previous: '<path d="m15 6-6 6 6 6"/>',
@@ -61,12 +64,14 @@ export class PipelineViewer {
     const dialog = this.dialog ?? el('dialog');
     this.dialog = dialog;
     dialog.replaceChildren();
-    dialog.className = 'pipeline-viewer';
+    dialog.className = 'pipeline-viewer app-dialog';
     dialog.setAttribute('aria-label', 'Palette extraction pipeline');
     const close = el('button');
     setIcon(close, 'Close');
+    close.className = 'dialog-close';
     close.onclick = () => this.close();
     const header = el('header');
+    header.className = 'dialog-header';
     const frames = createStory(data);
     const nav = el('nav');
     nav.setAttribute('aria-label', 'Pipeline chapters');
@@ -122,22 +127,8 @@ export class PipelineViewer {
     roles.className = 'pv-roles';
     roles.hidden = true;
     themeCard.append(roles);
-    const selection = el('label', 'Select by ');
-    selection.className = 'pv-selection';
-    const strategy = el('select');
-    strategy.setAttribute('aria-label', 'Selection strategy');
-    for (const [value, label] of [
-      ['population', 'Population'],
-      ['dominance-separated', 'Dominance'],
-      ['farthest-point', 'Farthest point'],
-      ['lightness', 'Lightness'],
-    ])
-      strategy.add(new Option(label, value));
-    strategy.value = data.result.configuration.effective.selection.kind;
-    strategy.onchange = () => {
-      player.pause();
-      options.select(strategy.value);
-    };
+    const selection = el('span', 'Select by ');
+    const strategy = el('em', data.result.configuration.effective.selection.kind);
     selection.append(strategy);
     const stepDescription = el('div');
     stepDescription.className = 'pv-step-description';
@@ -162,7 +153,10 @@ export class PipelineViewer {
     progress.setAttribute('aria-label', 'Story position');
     controls.append(play, previous, next, restart, timeline, original, progress);
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    dialog.append(header, stage, stepDescription, swatches, controls, options.advanced);
+    const body = el('div');
+    body.className = 'dialog-body';
+    body.append(stage, stepDescription, swatches, controls, options.advanced);
+    dialog.append(header, body);
     const painting = new PaintingView(canvas, image, data);
     let selected: string | undefined,
       showOriginal = false;

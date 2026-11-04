@@ -1,31 +1,5 @@
-.pipeline-viewer {
-  color-scheme: dark;
-  width: min(1040px, 96vw);
-  max-width: 96vw;
-  max-height: 96dvh;
-  margin: auto;
-  padding: 18px 22px;
-  border: 1px solid var(--shell-border);
-  border-radius: 16px;
-  background: var(--shell-panel-background);
-  color: var(--shell-text);
-  box-shadow: 0 24px 100px var(--shell-shadow);
-}
-.pipeline-viewer::backdrop {
-  background: var(--shell-backdrop);
-}
 .pipeline-viewer [hidden] {
   display: none !important;
-}
-.pipeline-viewer header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.pipeline-viewer h2 {
-  font-size: 20px;
-  margin: 0;
-  flex: 1;
 }
 .pipeline-viewer button {
   cursor: pointer;
@@ -189,14 +163,6 @@
   font-size: 14px;
 }
 @media (max-width: 650px) {
-  .pipeline-viewer {
-    width: 100vw;
-    max-width: 100vw;
-    max-height: 100dvh;
-    border-radius: 0;
-    padding: 12px;
-    box-sizing: border-box;
-  }
   .pv-painting {
     height: 43dvh;
   }
@@ -214,10 +180,6 @@
   }
 }
 
-.pipeline-viewer header {
-  margin-bottom: 14px;
-  align-items: flex-start;
-}
 .pipeline-viewer .pv-icon {
   display: inline-flex;
   align-items: center;
@@ -230,21 +192,6 @@
 .pipeline-viewer nav > span {
   color: var(--shell-text-muted);
   font-size: 12px;
-}
-.pv-selection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 13px;
-  margin: 8px 0;
-}
-.pv-selection select {
-  border: 1px solid var(--shell-border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  background: var(--shell-surface-raised);
-  color: var(--shell-text);
 }
 .pv-theme-card .pv-roles {
   gap: 4px 8px;
@@ -272,9 +219,6 @@
   .pipeline-viewer nav button {
     padding: 6px;
     font-size: 12px;
-  }
-  .pipeline-viewer header {
-    gap: 6px;
   }
   .pipeline-viewer .pipeline-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
