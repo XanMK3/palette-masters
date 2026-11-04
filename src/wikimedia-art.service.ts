@@ -24,7 +24,16 @@ export interface SearchOptions extends RequestOptions {
   limit?: number;
 }
 
+export type CommonsContinuation = Record<string, string | number>;
+export interface CommonsSearchPage {
+  images: CommonsImage[];
+  continuation: CommonsContinuation | null;
+}
+
 export interface CommonsSearchOptions extends RequestOptions {
+  /** Opaque continuation returned by searchCommonsImagesPage. */
+  continuation?: CommonsContinuation;
+
   /** Number of image matches (1–25). Default 9. */
   limit?: number;
   /** Requested thumbnail width in pixels (100–1600). Default 320. */
@@ -184,11 +193,13 @@ interface ImageInfo {
   extmetadata?: Record<string, { value?: string }>;
 }
 interface CommonsPage {
+  index?: number;
   title?: string;
   missing?: string;
   imageinfo?: ImageInfo[];
 }
 interface CommonsResponse extends ApiErrorShape {
+  continue?: CommonsContinuation;
   query?: { pages?: Record<string, CommonsPage> };
 }
 interface SparqlBinding {
@@ -742,9 +753,20 @@ export class WikimediaArtService {
     query: string,
     options: CommonsSearchOptions = {},
   ): Promise<CommonsImage[]> {
+    return (await this.searchCommonsImagesPage(query, options)).images;
+  }
+
+  /** One page of Commons results; pass continuation unchanged to fetch the next page. */
+  async searchCommonsImagesPage(
+    query: string,
+    options: CommonsSearchOptions = {},
+  ): Promise<CommonsSearchPage> {
     const q = safeQuery(query);
     const term = options.appendPaintingKeyword === false ? q : `${q} painting`;
     const url = this.actionUrl(COMMONS_API, {
+      ...Object.fromEntries(
+        Object.entries(options.continuation ?? {}).map(([key, value]) => [key, String(value)]),
+      ),
       action: 'query',
       generator: 'search',
       gsrsearch: term,
@@ -756,9 +778,11 @@ export class WikimediaArtService {
       iiextmetadatafilter: 'LicenseShortName|LicenseUrl|Artist|ImageDescription',
     });
     const response = await this.request<CommonsResponse>(url, options);
-    return Object.values(response.query?.pages ?? {})
+    const images = Object.values(response.query?.pages ?? {})
+      .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
       .map(mapCommonsImage)
       .filter((item): item is CommonsImage => item !== null);
+    return { images, continuation: response.continue ?? null };
   }
 
   /** Fetch a Commons file's thumbnail, original URL and license metadata. */

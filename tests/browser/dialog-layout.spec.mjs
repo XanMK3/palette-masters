@@ -17,18 +17,16 @@ for (const viewport of [
       document.body.append(root);
       const module = mountWikimediaSearch(root, {
         service: {
-          searchAll: () =>
+          searchEntities: async () => [],
+          searchCommonsImagesPage: () =>
             new Promise((resolve) => {
               window.finishSearch = () =>
                 resolve({
-                  entities: Array.from({ length: 30 }, (_, i) => ({
-                    id: `Q${i + 1}`,
-                    label: `Painting ${i}`,
-                    description: 'A painting',
-                    kindHint: 'painting',
+                  images: Array.from({ length: 30 }, (_, i) => ({
+                    fileTitle: `File:Painting ${i}.png`,
+                    thumbnailUrl: '/assets/palette-test-sample.png',
                   })),
-                  images: [],
-                  errors: [],
+                  continuation: null,
                 });
             }),
         },

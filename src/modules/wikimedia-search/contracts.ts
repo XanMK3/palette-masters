@@ -1,9 +1,6 @@
 import type { ArtworkSelection } from '../../artwork-selection.js';
 import type { WikimediaArtService } from '../../wikimedia-art.service.js';
-export type SearchService = Pick<
-  WikimediaArtService,
-  'searchAll' | 'searchEntities' | 'getEntity' | 'getArtistPaintings'
->;
+export type SearchService = Pick<WikimediaArtService, 'searchEntities' | 'searchCommonsImagesPage'>;
 export interface SearchOptions {
   service: SearchService;
   onSelect(item: ArtworkSelection): void;

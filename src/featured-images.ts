@@ -7,6 +7,14 @@
  * File provenance and reuse terms are at FEATURED_FILE_PAGES.
  */
 export const FEATURED_IMAGE_FILENAMES: Readonly<Record<string, string>> = {
+  Death_and_the_Maiden:
+    'Egon Schiele - Tod und Mädchen - 3171 - Österreichische Galerie Belvedere.jpg',
+  Grande_Odalisque:
+    'Jean Auguste Dominique Ingres, La Grande Odalisque, 1814.jpg',
+  Psyche_and_Cupid:
+    'Image-François Pascal Simon Gérard 006.jpg',
+  The_Garden_of_Earthly_Delights:
+    "Hieronymus Bosch - The Garden of Earthly Delights - Garden of Earthly Delights (Ecclesia's Paradise).jpg",
   The_Third_of_May_1808: 'El tres de mayo de 1808 en Madrid.jpg',
   The_Ambassadors: 'Holbein-ambassadorsFXD.jpg',
   Hall_of_the_Bulls: 'Lascaux painting.jpg',
@@ -69,6 +77,14 @@ export const FEATURED_IMAGE_FILENAMES: Readonly<Record<string, string>> = {
 };
 
 export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
+  Death_and_the_Maiden:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Egon_Schiele_-_Tod_und_M%C3%A4dchen_-_3171_-_%C3%96sterreichische_Galerie_Belvedere.jpg/960px-Egon_Schiele_-_Tod_und_M%C3%A4dchen_-_3171_-_%C3%96sterreichische_Galerie_Belvedere.jpg',
+  Grande_Odalisque:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Jean_Auguste_Dominique_Ingres%2C_La_Grande_Odalisque%2C_1814.jpg/960px-Jean_Auguste_Dominique_Ingres%2C_La_Grande_Odalisque%2C_1814.jpg',
+  Psyche_and_Cupid:
+    'https://upload.wikimedia.org/wikipedia/commons/9/92/Image-Fran%C3%A7ois_Pascal_Simon_G%C3%A9rard_006.jpg',
+  The_Garden_of_Earthly_Delights:
+    'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Hieronymus_Bosch_-_The_Garden_of_Earthly_Delights_-_Garden_of_Earthly_Delights_%28Ecclesia%27s_Paradise%29.jpg/960px-Hieronymus_Bosch_-_The_Garden_of_Earthly_Delights_-_Garden_of_Earthly_Delights_%28Ecclesia%27s_Paradise%29.jpg',
   The_Third_of_May_1808:
     'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/El_tres_de_mayo_de_1808_en_Madrid.jpg/960px-El_tres_de_mayo_de_1808_en_Madrid.jpg',
   The_Ambassadors:
@@ -174,6 +190,14 @@ export const FEATURED_DIRECT_IMAGES: Readonly<Record<string, string>> = {
 };
 
 export const FEATURED_FILE_PAGES: Readonly<Record<string, string>> = {
+  Death_and_the_Maiden:
+    'https://commons.wikimedia.org/wiki/File:Egon_Schiele_-_Tod_und_M%C3%A4dchen_-_3171_-_%C3%96sterreichische_Galerie_Belvedere.jpg',
+  Grande_Odalisque:
+    'https://commons.wikimedia.org/wiki/File:Jean_Auguste_Dominique_Ingres%2C_La_Grande_Odalisque%2C_1814.jpg',
+  Psyche_and_Cupid:
+    'https://commons.wikimedia.org/wiki/File:Image-Fran%C3%A7ois_Pascal_Simon_G%C3%A9rard_006.jpg',
+  The_Garden_of_Earthly_Delights:
+    'https://commons.wikimedia.org/wiki/File:Hieronymus_Bosch_-_The_Garden_of_Earthly_Delights_-_Garden_of_Earthly_Delights_%28Ecclesia%27s_Paradise%29.jpg',
   The_Third_of_May_1808:
     'https://commons.wikimedia.org/wiki/File:El_tres_de_mayo_de_1808_en_Madrid.jpg',
   The_Ambassadors: 'https://commons.wikimedia.org/wiki/File:Holbein-ambassadorsFXD.jpg',
@@ -262,6 +286,14 @@ export const FEATURED_FILE_PAGES: Readonly<Record<string, string>> = {
 };
 
 export const FEATURED_UPLOAD_IMAGES: Readonly<Record<string, string>> = {
+  Death_and_the_Maiden:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Egon_Schiele_-_Tod_und_M%C3%A4dchen_-_3171_-_%C3%96sterreichische_Galerie_Belvedere.jpg/960px-Egon_Schiele_-_Tod_und_M%C3%A4dchen_-_3171_-_%C3%96sterreichische_Galerie_Belvedere.jpg',
+  Grande_Odalisque:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Jean_Auguste_Dominique_Ingres%2C_La_Grande_Odalisque%2C_1814.jpg/960px-Jean_Auguste_Dominique_Ingres%2C_La_Grande_Odalisque%2C_1814.jpg',
+  Psyche_and_Cupid:
+    'https://upload.wikimedia.org/wikipedia/commons/9/92/Image-Fran%C3%A7ois_Pascal_Simon_G%C3%A9rard_006.jpg',
+  The_Garden_of_Earthly_Delights:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hieronymus_Bosch_-_The_Garden_of_Earthly_Delights_-_Garden_of_Earthly_Delights_%28Ecclesia%27s_Paradise%29.jpg/960px-Hieronymus_Bosch_-_The_Garden_of_Earthly_Delights_-_Garden_of_Earthly_Delights_%28Ecclesia%27s_Paradise%29.jpg',
   The_Third_of_May_1808:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/El_tres_de_mayo_de_1808_en_Madrid.jpg/960px-El_tres_de_mayo_de_1808_en_Madrid.jpg',
   The_Ambassadors:
@@ -364,46 +396,4 @@ export const FEATURED_UPLOAD_IMAGES: Readonly<Record<string, string>> = {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Paul_Gauguin_-_D%27ou_venons-nous.jpg/500px-Paul_Gauguin_-_D%27ou_venons-nous.jpg',
   At_the_Moulin_Rouge:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Henri_de_Toulouse-Lautrec_-_At_the_Moulin_Rouge_-_Google_Art_Project.jpg/500px-Henri_de_Toulouse-Lautrec_-_At_the_Moulin_Rouge_-_Google_Art_Project.jpg',
-};
-
-/** Optional image attribution and editorial notes for the shared featured catalog. */
-export const FEATURED_IMAGE_METADATA: Readonly<
-  Record<string, { readonly credit: string; readonly note: string }>
-> = {
-  Hall_of_the_Bulls: {
-    credit: 'Prof saxx · CC BY-SA 3.0',
-    note: 'Hall of the Bulls detail',
-  },
-  'The_Shaft_Scene_(Bird-Headed_Man_and_Bison)': {
-    credit: 'Peter80 · CC BY-SA 3.0',
-    note: 'Shaft scene',
-  },
-  Panel_of_Horses: {
-    credit: 'Thomas T. · CC BY-SA 2.0',
-    note: 'Museum replica',
-  },
-  Panel_of_Lions: {
-    credit: 'HTO · Public domain',
-    note: 'Museum replica',
-  },
-  Cave_of_Altamira: {
-    credit: 'Museo de Altamira y D. Rodríguez · CC BY-SA 3.0',
-    note: 'Polychrome bison',
-  },
-  Spotted_Horses: {
-    credit: 'Céréales Killer · CC BY-SA 4.0',
-    note: 'Spotted horses panel',
-  },
-  Warty_Pig_Painting: {
-    credit: 'Basran Burhan · CC BY-SA 4.0',
-    note: 'Natural-color photograph',
-  },
-  'Pig_and_Human-Like_Figures': {
-    credit: 'Oktaviana et al. · CC BY 4.0',
-    note: 'User-selected Commons photograph',
-  },
-  Cueva_de_las_Manos: {
-    credit: 'Mariano · CC BY-SA 3.0',
-    note: 'Hand stencils',
-  },
 };

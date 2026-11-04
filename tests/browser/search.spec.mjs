@@ -10,7 +10,7 @@ test('Wikimedia search opens separately from preset browsing and restores focus'
   await page.getByRole('button', { name: 'Wikimedia', exact: true }).click();
   await opener.click();
   await expect(page.getByRole('dialog', { name: 'Search Wikimedia' })).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Search artist or painting' })).toBeFocused();
+  await expect(page.getByRole('combobox', { name: 'Search artist or painting' })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).not.toBeVisible();
   await expect(opener).toBeFocused();
@@ -37,10 +37,10 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
     shell = createAppShell(
       root,
       {
-        searchAll: async () => ({
-          entities: [],
-          errors: [],
+        searchEntities: async () => [{ id: 'Q1', label: 'Test painting', kindHint: 'painting' }],
+        searchCommonsImagesPage: async () => ({
           images: [{ fileTitle: 'File:Test painting.png', thumbnailUrl: imageUrl }],
+          continuation: null,
         }),
       },
       {
