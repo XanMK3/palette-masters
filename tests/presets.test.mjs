@@ -15,8 +15,8 @@ test('three automatic presets evaluate both selectors and retain the winning pip
   assert.deepEqual(
     [...PRESET_IDS],
     [
-      'hue-auto',
       'oklab-kmeans-auto',
+      'hue-auto',
       'octree-auto',
       'slic-samples-farthest',
       'medoids-dominance',

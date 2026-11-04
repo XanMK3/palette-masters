@@ -150,7 +150,7 @@ test('workflow instances keep state separate and ignore all intents after dispos
   expect(result).toEqual({
     separate: [
       { method: 'octree-auto', template: 'poster', canExport: false },
-      { method: 'hue-auto', template: 'landing', canExport: false },
+      { method: 'oklab-kmeans-auto', template: 'landing', canExport: false },
     ],
     ignored: true,
   });
