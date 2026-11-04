@@ -36,8 +36,8 @@ Stop the dev server before running `npm run preview`, since both use port 8080.
 
 Set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**.
 The [deployment workflow](.github/workflows/deploy-pages.yml) builds and publishes
-`dist/` on every push to `master`, including merged pull requests. It also supports
-manual runs on `master` from the Actions tab.
+`dist/` on every push to `main`, including merged pull requests. It also supports
+manual runs on `main` from the Actions tab.
 
 Vite's `base: './'` supports the repository subpath without additional configuration.
 The published URL appears in the workflow's `github-pages` environment.
