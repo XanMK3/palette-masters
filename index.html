@@ -123,24 +123,18 @@
         padding: 5px 8px;
       }
       .sideinner {
-        padding: 16px;
+        padding: 12px;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         overflow-y: auto;
         flex: 1;
         min-height: 0;
         overscroll-behavior: contain;
       }
-      .eyebrow {
-        color: var(--shell-text-muted);
-        font-size: 10px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        font-weight: 750;
-      }
       .palette-heading {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
@@ -179,15 +173,17 @@
         color: var(--shell-text-muted);
         line-height: 1.5;
       }
-      .divider {
-        padding-top: 8px;
-        border-top: 1px solid var(--shell-border);
+      .sidebar-panel {
+        flex-shrink: 0;
+        min-width: 0;
+        padding: 12px;
+        background: var(--shell-section-surface);
+        border-radius: 12px;
       }
       .swatches {
         display: grid;
         grid-template-columns: repeat(var(--swatch-count, 5), minmax(0, 1fr));
         gap: 8px;
-        margin: 13px 0 5px;
         min-height: 60px;
       }
       .swatch {
@@ -205,27 +201,13 @@
         border: 1px solid var(--shell-swatch-border);
         background: linear-gradient(120deg, var(--shell-placeholder), var(--shell-placeholder-end));
       }
-      .swatch code {
-        position: absolute;
-        bottom: 2px;
-        left: 2px;
-        padding: 2px;
-        border-radius: 4px;
-        background: var(--shell-swatch-label);
-        color: var(--shell-text-bright);
-        font-size: 8px;
-        font-weight: 600;
-        line-height: 1.2;
-        letter-spacing: -0.35px;
-        white-space: nowrap;
-      }
-      .field {
+      .field, .palette-field {
         display: flex;
         flex-direction: column;
         gap: 6px;
         flex: 1;
       }
-      .field label {
+      .field label, .palette-title-label {
         color: var(--shell-text-muted);
         font-size: 10px;
         letter-spacing: 0.7px;

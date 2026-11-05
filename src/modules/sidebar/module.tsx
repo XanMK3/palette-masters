@@ -155,9 +155,7 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
                   aria-label={`Copy palette color ${index + 1}, ${hex}`}
                   onClick={() => void copyText(hex)}
                 >
-                  <div class="pigment" style={{ background: hex }}>
-                    <code>{hex}</code>
-                  </div>
+                  <div class="pigment" style={{ background: hex }} />
                 </button>
                 <select
                   id={`palette-role-${index + 1}`}
@@ -212,7 +210,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
     <>
       <Header />
       <div class="sideinner">
-        <section class="artwork-browser" aria-label="Artwork browser">
+        <section class="sidebar-panel artwork-browser" aria-label="Artwork browser">
           <div class="artwork-source-switch" role="group" aria-label="Artwork source">
             <button
               type="button"
@@ -278,7 +276,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
                   <div class="searched-caption">
                     <strong title={searched.item.title}>{searched.item.title}</strong>
                     <span title={searched.item.artist}>{searched.item.artist}</span>
-                    <small>{active ? 'Selected' : 'Click to apply palette'}</small>
+                    <small>{active ? '' : 'Click to apply palette'}</small>
                   </div>
                 </button>
               ) : (
@@ -287,7 +285,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
             </div>
           </div>
         </section>
-        <section class="divider" style={{ paddingTop: 18 }} aria-label="Extraction settings">
+        <section class="sidebar-panel" aria-label="Extraction settings">
           <div class="fieldrow">
             <div class="field">
               <label for="method">Extraction algorithm</label>
@@ -308,51 +306,53 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
             </div>
           </div>
         </section>
-        <section class="divider" style={{ paddingTop: 18 }}>
-          <div class="palette-heading">
-            <div class="palette-title">
-              <div class="eyebrow">Extracted palette</div>
+        <section class="sidebar-panel" aria-label="Extracted palette">
+          <div class="palette-field">
+            <div class="palette-heading">
+              <div class="palette-title">
+                <div class="palette-title-label">Extracted palette</div>
+                <button
+                  id="view-pipeline"
+                  class="palette-help"
+                  type="button"
+                  disabled={!state.palette || state.palettePending}
+                  aria-label="How this palette was extracted"
+                  title="How this palette was extracted"
+                  aria-haspopup="dialog"
+                  onClick={actions.openPipeline}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4" />
+                    <path d="M12 17h.01" />
+                  </svg>
+                </button>
+              </div>
               <button
-                id="view-pipeline"
-                class="palette-help"
+                id="btn-shuffle"
                 type="button"
                 disabled={!state.palette || state.palettePending}
-                aria-label="How this palette was extracted"
-                title="How this palette was extracted"
-                aria-haspopup="dialog"
-                onClick={actions.openPipeline}
+                onClick={actions.shuffle}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4" />
-                  <path d="M12 17h.01" />
-                </svg>
+                <ShuffleIcon />
+                <span>Shuffle Roles</span>
               </button>
             </div>
-            <button
-              id="btn-shuffle"
-              type="button"
-              disabled={!state.palette || state.palettePending}
-              onClick={actions.shuffle}
-            >
-              <ShuffleIcon />
-              <span>Shuffle Roles</span>
-            </button>
+            <Swatches state={state} actions={actions} />
+            <p id="palette-error" class="tiny" role="alert">
+              {state.error}
+            </p>
           </div>
-          <Swatches state={state} actions={actions} />
-          <p id="palette-error" class="tiny" role="alert">
-            {state.error}
-          </p>
         </section>
       </div>
     </>
