@@ -65,6 +65,7 @@ function App({ art, sources, actions, state, connect }: Props) {
     const sidebar = mountSidebar(sidebarRoot.current!, {
       sources,
       actions: {
+        getCssVariables: () => controller.current?.sidebarActions.getCssVariables() ?? null,
         openSearch: () => search.current?.open(),
         selectPainting: (item) => {
           void actions.selectPainting({ ...item, source: item.source ?? 'curated' });
@@ -184,6 +185,16 @@ function App({ art, sources, actions, state, connect }: Props) {
                   }}
                 >
                   Tailwind v4 theme
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    controller.current?.downloadCssVariables();
+                    setDownloadOpen(false);
+                    downloadButton.current?.focus();
+                  }}
+                >
+                  CSS variables
                 </button>
               </div>
             )}

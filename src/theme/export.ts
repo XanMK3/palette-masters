@@ -34,3 +34,16 @@ ${Object.entries(colors)
 }
 `;
 }
+
+/** Export only the five assigned palette roles as ordinary CSS properties. */
+export function exportCssVariables(tokens: Record<string, string>): string {
+  const declarations = ['bg', 'surface', 'text', 'accent', 'secondary'].map((role) => {
+    const name = `--color-${role}`;
+    const value = tokens[name];
+    if (!value || !/^#[0-9a-f]{6}$/i.test(value)) {
+      throw new TypeError(`Missing or invalid palette color: ${name}`);
+    }
+    return `  ${name}: ${value};`;
+  });
+  return `:root {\n${declarations.join('\n')}\n}\n`;
+}

@@ -1,5 +1,5 @@
 import { render } from 'preact';
-import { useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { ArtworkImage, ImageError } from '../artwork.js';
 import { Header, ShuffleIcon } from './header.js';
 import { createPaintingAnimation } from './painting-animation.js';
@@ -129,6 +129,84 @@ async function copyText(value: string) {
     console.warn('Clipboard access blocked');
   }
 }
+function CopyCssButton({
+  state,
+  actions,
+}: {
+  state: SidebarState;
+  actions: SidebarOptions['actions'];
+}) {
+  const [status, setStatus] = useState('');
+  const [copying, setCopying] = useState(false);
+  const generation = useRef(0);
+  useEffect(() => {
+    generation.current++;
+    setStatus('');
+    setCopying(false);
+    return () => {
+      generation.current++;
+    };
+  }, [state.palette, state.assignments, state.palettePending]);
+  useEffect(() => {
+    if (!status) return;
+    const timer = window.setTimeout(() => setStatus(''), 3000);
+    return () => window.clearTimeout(timer);
+  }, [status]);
+  async function copy() {
+    const css = actions.getCssVariables();
+    if (css === null) return;
+    const current = generation.current;
+    setCopying(true);
+    try {
+      await navigator.clipboard.writeText(css);
+      if (current === generation.current) setStatus('Copied');
+    } catch {
+      if (current === generation.current)
+        setStatus('Could not copy CSS variables. Try downloading them.');
+    } finally {
+      if (current === generation.current) setCopying(false);
+    }
+  }
+  return (
+    <>
+      <button
+        id="copy-css-variables"
+        class="palette-action"
+        type="button"
+        title={status || 'Copy CSS variables'}
+        aria-label="Copy CSS variables"
+        disabled={!state.palette || state.palettePending || copying}
+        onClick={() => void copy()}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          {status === 'Copied' ? (
+            <path d="m5 12 4 4L19 6" />
+          ) : (
+            <>
+              <rect x="9" y="9" width="12" height="12" rx="2" />
+              <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+            </>
+          )}
+        </svg>
+        <span>Copy</span>
+      </button>
+      <span class="tiny" role="status">
+        {status}
+      </span>
+    </>
+  );
+}
+
 function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOptions['actions'] }) {
   const { palette, assignments } = state;
   const roles = ROLE_KEYS.slice(0, 5);
@@ -340,6 +418,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
               </div>
               <button
                 id="btn-shuffle"
+                class="palette-action"
                 type="button"
                 disabled={!state.palette || state.palettePending}
                 onClick={actions.shuffle}
@@ -349,6 +428,9 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
               </button>
             </div>
             <Swatches state={state} actions={actions} />
+            <div class="palette-copy-actions">
+              <CopyCssButton state={state} actions={actions} />
+            </div>
             <p id="palette-error" class="tiny" role="alert">
               {state.error}
             </p>
@@ -361,6 +443,7 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
 export function mountSidebar(root: HTMLElement, options: SidebarOptions): SidebarModule {
   let disposed = false;
   const actions: SidebarOptions['actions'] = {
+    getCssVariables: () => (disposed ? null : options.actions.getCssVariables()),
     openSearch: () => {
       if (!disposed) options.actions.openSearch?.();
     },
