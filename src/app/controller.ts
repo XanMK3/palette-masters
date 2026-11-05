@@ -1,6 +1,6 @@
 import type { ControllerPorts } from './ports.js';
 import type { SidebarActions } from '../modules/sidebar/index.js';
-import { exportTailwindTheme } from '../theme/export.js';
+import { exportCssVariables, exportTailwindTheme } from '../theme/export.js';
 import type { ComputationInput } from '../computation/contracts.js';
 import type { ThemeResult } from '../extraction/types.js';
 import { DEFAULT_PRESET, PRESET_LABELS } from '../extraction/presets.js';
@@ -196,7 +196,17 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     if (lifetime.signal.aborted || !resultReady || palettePending || !appliedThemeTokens) return;
     ports.download('theme.css', exportTailwindTheme(appliedThemeTokens), 'text/css;charset=utf-8');
   }
+  function getCssVariables(): string | null {
+    if (lifetime.signal.aborted || !resultReady || palettePending || !appliedThemeTokens)
+      return null;
+    return exportCssVariables(appliedThemeTokens);
+  }
+  function downloadCssVariables() {
+    const css = getCssVariables();
+    if (css !== null) ports.download('palette.css', css, 'text/css;charset=utf-8');
+  }
   const sidebarActions: SidebarActions = {
+    getCssVariables,
     selectPainting: (item) => {
       if (!lifetime.signal.aborted) void selectPainting(item);
     },
@@ -232,6 +242,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
     sidebarActions,
     setTemplate,
     downloadTheme,
+    downloadCssVariables,
     changeConfiguration,
     selectionStarted(item: ArtworkSelection) {
       if (lifetime.signal.aborted) return;

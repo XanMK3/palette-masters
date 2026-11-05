@@ -21,6 +21,7 @@ export interface SidebarState {
   readonly error: string;
 }
 export interface SidebarActions {
+  getCssVariables(): string | null;
   openSearch?(): void;
   selectPainting(item: ArtworkSelection): void;
   changeMethod(method: PaletteMethod, label: string): void;

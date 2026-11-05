@@ -103,3 +103,58 @@ test('download exports current mapped colors and works in an independent Tailwin
     expect(await downloadTheme(page)).toBe(css);
   }
 });
+
+test('plain CSS download and clipboard contain only the five current palette roles', async ({
+  page,
+}) => {
+  await page.route(/^https:\/\//, (route) => route.abort());
+  await page.goto('/');
+  const copy = page.getByRole('button', { name: 'Copy CSS variables', exact: true });
+  await expect(copy).toBeDisabled();
+  await loadArtworkFixture(page);
+  await page.evaluate(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (text) => {
+          window.copiedCss = text;
+        },
+      },
+    });
+  });
+  for (const action of ['initial', 'manual', 'shuffle']) {
+    if (action === 'manual') await page.locator('#swatches select').first().selectOption('accent');
+    if (action === 'shuffle') await page.locator('#btn-shuffle').click();
+    await expect(copy).toBeEnabled();
+    await page.getByRole('button', { name: 'Download theme', exact: true }).click();
+    const pending = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'CSS variables', exact: true }).click();
+    const download = await pending;
+    expect(download.suggestedFilename()).toBe('palette.css');
+    const css = await readFile(await download.path(), 'utf8');
+    const roles = ['bg', 'surface', 'text', 'accent', 'secondary'];
+    const colors = colorsFromCSS(css);
+    expect(Object.keys(colors)).toEqual(roles.map((role) => `--color-${role}`));
+    expect(css).toMatch(/^:root \{\n(?:  --color-[a-z]+: #[0-9a-f]{6};\n){5}\}\n$/i);
+    const frame = await (await page.locator('#templatePreview').elementHandle()).contentFrame();
+    const expected = await frame.evaluate((roles) => {
+      const style = document.getElementById('themeStage').style;
+      return Object.fromEntries(
+        roles.map((role) => [`--color-${role}`, style.getPropertyValue(`--color-${role}`)]),
+      );
+    }, roles);
+    expect(colors).toEqual(expected);
+    await copy.click();
+    await expect(page.getByRole('status')).toHaveText('Copied');
+    expect(await page.evaluate(() => window.copiedCss)).toBe(css);
+  }
+  await page.evaluate(() => {
+    navigator.clipboard.writeText = async () => {
+      throw new Error('Denied');
+    };
+  });
+  await copy.click();
+  await expect(page.getByRole('status')).toHaveText(
+    'Could not copy CSS variables. Try downloading them.',
+  );
+});
