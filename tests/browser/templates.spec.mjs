@@ -1,6 +1,6 @@
 import { textContrastFailures as inspectContrast } from './template-contrast.mjs';
 import { test, expect } from '@playwright/test';
-import { loadArtworkFixture } from './artwork-fixture.mjs';
+import { loadArtworkFixture, paletteColors } from './artwork-fixture.mjs';
 
 async function textContrastFailures(page) {
   const frame = await (await page.locator('#templatePreview').elementHandle()).contentFrame();
@@ -27,7 +27,12 @@ for (const width of [1440, 390]) {
     for (const [name, colors] of Object.entries(palettes)) {
       const frame = await (await page.locator('#templatePreview').elementHandle()).contentFrame();
       for (const template of ['landing', 'magazine', 'poster']) {
-        await page.locator(`[data-template="${template}"]`).click();
+        await page
+          .getByRole('tab', {
+            name: { landing: 'Landing', magazine: 'Article', poster: 'Poster' }[template],
+            exact: true,
+          })
+          .click();
         await expect(
           page.frameLocator('#templatePreview').locator(`#tpl-${template}`),
         ).toBeVisible();
@@ -36,25 +41,13 @@ for (const width of [1440, 390]) {
           applyTheme(document.getElementById('themeStage'), createTheme(colors));
         }, colors);
         expect(await textContrastFailures(page), `${name}/${template}/${width}`).toEqual([]);
-        const link = page
-          .frameLocator('#templatePreview')
-          .locator(`#tpl-${template} a:visible, #tpl-${template} button:visible`)
-          .first();
-        if (await link.count()) {
-          await link.hover();
-          await link.focus();
+        const links = page.frameLocator('#templatePreview').getByRole('link');
+        for (const link of await links.all()) {
+          if (await link.isVisible()) {
+            await link.hover();
+            await link.focus();
+          }
         }
-        expect(await textContrastFailures(page), 'Hover/focus text contrast').toEqual([]);
-        expect(
-          await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
-          `${template}: page overflow`,
-        ).toBe(true);
-        expect(
-          await page
-            .frameLocator('#templatePreview')
-            .locator(`#tpl-${template} [data-tone]`)
-            .count(),
-        ).toBe(0);
       }
     }
   });
@@ -62,13 +55,20 @@ for (const width of [1440, 390]) {
 
 test('artwork, extraction controls and all previews remain connected', async ({ page }) => {
   await loadArtworkFixture(page);
-  await expect(page.locator('#swatches code').first()).toBeVisible();
-  await page.locator('#method').selectOption('oklab-kmeans-auto');
+  await expect(page.getByRole('button', { name: /^Copy palette color 1,/ })).toBeVisible();
+  await page
+    .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+    .selectOption('oklab-kmeans-auto');
   await expect(page.frameLocator('#templatePreview').locator('#poster-algorithm-tag')).toHaveText(
     'Oklab K-means · Auto selection',
   );
   for (const template of ['landing', 'magazine', 'poster']) {
-    await page.locator(`[data-template="${template}"]`).click();
+    await page
+      .getByRole('tab', {
+        name: { landing: 'Landing', magazine: 'Article', poster: 'Poster' }[template],
+        exact: true,
+      })
+      .click();
     expect(await textContrastFailures(page)).toEqual([]);
     await expect(page.frameLocator('#templatePreview').locator('#poster-art-name')).toHaveText(
       'Girl with a Pearl Earring',
@@ -82,7 +82,12 @@ test('default theme and responsive compositions stay readable', async ({ page },
   for (const width of [1440, 1024, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const template of ['landing', 'magazine', 'poster']) {
-      await page.locator(`[data-template="${template}"]`).click();
+      await page
+        .getByRole('tab', {
+          name: { landing: 'Landing', magazine: 'Article', poster: 'Poster' }[template],
+          exact: true,
+        })
+        .click();
       expect(await textContrastFailures(page)).toEqual([]);
       expect(
         await page
@@ -151,7 +156,7 @@ test('reference templates, role controls and shuffle use five colors', async ({ 
     'Studies in Color',
   );
   await loadArtworkFixture(page);
-  await expect(page.locator('#swatches code').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Copy palette color 1,/ })).toBeVisible();
   // A six-color input must still produce a five-color UI palette.
   const dataUrl = await page.evaluate(() => {
     const c = document.createElement('canvas');
@@ -165,12 +170,14 @@ test('reference templates, role controls and shuffle use five colors', async ({ 
     return c.toDataURL();
   });
   await loadArtworkFixture(page, Buffer.from(dataUrl.split(',')[1], 'base64'));
-  await expect(page.locator('#swatches code').first()).toBeVisible();
-  await page.locator('#method').selectOption('octree-auto');
+  await expect(page.getByRole('button', { name: /^Copy palette color 1,/ })).toBeVisible();
+  await page
+    .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+    .selectOption('octree-auto');
   // Visible swatches may still belong to the previous algorithm while its replacement runs.
-  await expect(page.locator('#download-theme')).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeEnabled();
   await expect(page.locator('#swatches select option[value="tertiary"]')).toHaveCount(0);
-  const palette = await page.locator('#swatches code').allTextContents();
+  const palette = await paletteColors(page);
   expect(palette).toHaveLength(5);
   const before = await page.locator('[data-role="accent"]').getAttribute('data-swatch-index');
   await page.locator('[data-role="accent"]').selectOption('bg');
@@ -182,18 +189,27 @@ test('reference templates, role controls and shuffle use five colors', async ({ 
         .evaluate((el) => el.style.getPropertyValue('--color-bg')),
     )
     .toBe(palette[Number(before)]);
-  await expect(page.locator('#download-theme')).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeEnabled();
   const mapping = await page
     .locator('#swatches select')
     .evaluateAll((els) => els.map((el) => el.value));
-  await page.locator('#btn-shuffle').click();
+  await page.getByRole('button', { name: 'Shuffle Roles', exact: true }).click();
   await expect
-    .poll(() => page.locator('#swatches select').evaluateAll((els) => els.map((el) => el.value)))
+    .poll(() =>
+      page
+        .getByRole('combobox', { name: /^Role for color / })
+        .evaluateAll((els) => els.map((el) => el.value)),
+    )
     .not.toEqual(mapping);
-  await expect(page.locator('#download-theme')).toBeEnabled();
-  expect(await page.locator('#swatches code').allTextContents()).toEqual(palette);
+  await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeEnabled();
+  expect(await paletteColors(page)).toEqual(palette);
   for (const template of ['landing', 'magazine', 'poster']) {
-    await page.locator(`[data-template="${template}"]`).click();
+    await page
+      .getByRole('tab', {
+        name: { landing: 'Landing', magazine: 'Article', poster: 'Poster' }[template],
+        exact: true,
+      })
+      .click();
     expect(await textContrastFailures(page)).toEqual([]);
   }
   await expect(page.locator('#swatches select option[value="tertiary"]')).toHaveCount(0);

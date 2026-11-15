@@ -2,7 +2,8 @@ import type { ArtworkSelection } from '../artwork-selection.js';
 import type { SelectionView } from '../image-selection.js';
 
 export interface AppActions {
-  selectPainting(item: ArtworkSelection): void | Promise<void>;
+  /** Starts selection; the image workflow owns async errors and reports through SelectionView. */
+  selectPainting(item: ArtworkSelection): void;
 }
 /** Image workflow output port plus shell lifetime. */
 export interface AppShell extends SelectionView {

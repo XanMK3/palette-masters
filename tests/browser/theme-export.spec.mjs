@@ -38,8 +38,10 @@ test('download exports current mapped colors and works in an independent Tailwin
   await loadArtworkFixture(page);
   await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeEnabled();
   for (const action of ['initial', 'manual', 'shuffle']) {
-    if (action === 'manual') await page.locator('#swatches select').first().selectOption('accent');
-    if (action === 'shuffle') await page.locator('#btn-shuffle').click();
+    if (action === 'manual')
+      await page.getByRole('combobox', { name: /^Role for color 1,/ }).selectOption('accent');
+    if (action === 'shuffle')
+      await page.getByRole('button', { name: 'Shuffle Roles', exact: true }).click();
     const css = await downloadTheme(page);
     const colors = colorsFromCSS(css);
     expect(Object.keys(colors)).toHaveLength(31);
@@ -99,7 +101,7 @@ test('download exports current mapped colors and works in an independent Tailwin
     } finally {
       await consumer.close();
     }
-    await page.locator('[data-template="poster"]').click();
+    await page.getByRole('tab', { name: 'Poster', exact: true }).click();
     expect(await downloadTheme(page)).toBe(css);
   }
 });
@@ -123,8 +125,10 @@ test('plain CSS download and clipboard contain only the five current palette rol
     });
   });
   for (const action of ['initial', 'manual', 'shuffle']) {
-    if (action === 'manual') await page.locator('#swatches select').first().selectOption('accent');
-    if (action === 'shuffle') await page.locator('#btn-shuffle').click();
+    if (action === 'manual')
+      await page.getByRole('combobox', { name: /^Role for color 1,/ }).selectOption('accent');
+    if (action === 'shuffle')
+      await page.getByRole('button', { name: 'Shuffle Roles', exact: true }).click();
     await expect(copy).toBeEnabled();
     await page.getByRole('button', { name: 'Download theme', exact: true }).click();
     const pending = page.waitForEvent('download');

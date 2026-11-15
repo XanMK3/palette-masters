@@ -18,8 +18,10 @@ test('poster follows selected artwork and renders all five exact palette colors'
     return canvas.toDataURL();
   });
   await loadArtworkFixture(page, Buffer.from(dataUrl.split(',')[1], 'base64'));
-  await page.locator('#method').selectOption('octree-auto');
-  await page.locator('[data-template="poster"]').click();
+  await page
+    .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+    .selectOption('octree-auto');
+  await page.getByRole('tab', { name: 'Poster', exact: true }).click();
   await expect(page.frameLocator('#templatePreview').locator('#poster-artwork img')).toHaveClass(
     'loaded',
   );
@@ -58,7 +60,7 @@ test('poster follows selected artwork and renders all five exact palette colors'
   );
   await expect(page.frameLocator('#templatePreview').locator('#poster-swatch-row')).toHaveCount(0);
   await verifyColors();
-  await page.locator('#btn-shuffle').click();
+  await page.getByRole('button', { name: 'Shuffle Roles', exact: true }).click();
   await verifyColors();
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });

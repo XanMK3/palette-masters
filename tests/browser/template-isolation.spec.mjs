@@ -58,7 +58,7 @@ test('app CSS is isolated and iframe reload restores the current state', async (
   await page.route(/^https:\/\//, (route) => route.abort());
   await page.goto('/');
   await loadArtworkFixture(page);
-  await page.locator('[data-template="poster"]').click();
+  await page.getByRole('tab', { name: 'Poster', exact: true }).click();
   const preview = page.frameLocator('#templatePreview');
   await expect(preview.locator('#poster-artwork img')).toHaveClass('loaded');
   const appearance = () =>

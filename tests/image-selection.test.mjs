@@ -31,7 +31,7 @@ function setup(overrides = {}) {
   };
   const sources = createArtworkSources(service);
   const view = Object.fromEntries(
-    ['selectionStarted', 'showImage', 'pixelsReady'].map((name) => [
+    ['selectionStarted', 'showImage', 'pixelsReady', 'selectionFailed'].map((name) => [
       name,
       (...args) => events.push([name, ...args]),
     ]),
@@ -48,6 +48,7 @@ test('displays the direct image synchronously and preserves it when pixel access
   assert.equal(emitted(events, 'pixelsReady').length, 0);
   pending.reject(new Error('CORS blocked'));
   await work;
+  assert.match(emitted(events, 'selectionFailed')[0][1], /CORS blocked; fetch unavailable/);
   assert.equal(emitted(events, 'showImage').length, 1);
   assert.equal(emitted(events, 'pixelsReady').length, 0);
 });
@@ -140,3 +141,69 @@ test('releases a fetched image that completes after cancellation', async () => {
   assert.equal(disposed, 1);
   assert.equal(emitted(events, 'pixelsReady').length, 0);
 });
+
+test('reports missing artwork and recovers on a later selection', async () => {
+  const { controller, events } = setup();
+  await controller.selectPainting({ ...painting(), imageUrl: undefined });
+  assert.match(emitted(events, 'selectionFailed')[0][1], /No Wikimedia image found/);
+  await controller.selectPainting(painting('B'));
+  assert.deepEqual(emitted(events, 'pixelsReady'), [['pixelsReady', pixels]]);
+});
+
+test('reports lookup failures through the selection view', async () => {
+  const { controller, events } = setup({
+    resolveArtworkImage: () => {
+      throw new Error('Lookup unavailable');
+    },
+  });
+  await controller.selectPainting({ ...painting(), imageUrl: undefined });
+  assert.match(
+    emitted(events, 'selectionFailed')[0][1],
+    /Commons lookup failed: Lookup unavailable/,
+  );
+});
+
+for (const stage of ['metadata', 'pixels', 'fetch']) {
+  for (const finish of ['replacement', 'disposal']) {
+    test(`ignores late ${stage} failure after ${finish}`, async () => {
+      const pending = deferred();
+      const started = deferred();
+      let oldSignal;
+      const { controller, events } = setup({
+        resolveArtworkImage: (_item, { signal }) => {
+          oldSignal = signal;
+          started.resolve();
+          return pending.promise;
+        },
+        readImagePixelsViaImageTag: (url, { signal }) => {
+          if (url.endsWith('/B')) return Promise.resolve(pixels);
+          oldSignal = signal;
+          if (stage === 'fetch') return Promise.reject(new Error('Try fetch'));
+          started.resolve();
+          return pending.promise;
+        },
+        fetchArtworkImage: () => {
+          started.resolve();
+          return pending.promise;
+        },
+      });
+      const first = controller.selectPainting({
+        ...painting(),
+        ...(stage === 'metadata' ? { imageUrl: undefined } : {}),
+      });
+      await started.promise;
+      if (finish === 'replacement') await controller.selectPainting(painting('B'));
+      else controller.dispose();
+      assert.equal(oldSignal.aborted, true);
+      pending.reject(new Error('Late failure'));
+      await first;
+      assert.deepEqual(emitted(events, 'selectionFailed'), []);
+      assert.equal(emitted(events, 'pixelsReady').length, finish === 'replacement' ? 1 : 0);
+      if (finish === 'disposal') {
+        const previous = events.length;
+        await controller.selectPainting(painting('C'));
+        assert.equal(events.length, previous);
+      }
+    });
+  }
+}

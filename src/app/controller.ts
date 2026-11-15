@@ -17,7 +17,6 @@ import {
 } from '../theme.service.js';
 
 export function createController(ports: ControllerPorts, actions: AppActions) {
-  const { selectPainting } = actions;
   const { preview, pipeline: pipelineViewer, computation } = ports;
   const lifetime = new AbortController();
   let selection: ArtworkSelection | null = null;
@@ -208,7 +207,8 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   const sidebarActions: SidebarActions = {
     getCssVariables,
     selectPainting: (item) => {
-      if (!lifetime.signal.aborted) void selectPainting(item);
+      if (lifetime.signal.aborted) return;
+      actions.selectPainting(item);
     },
     changeMethod(next, label) {
       if (lifetime.signal.aborted) return;
@@ -250,6 +250,14 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
       if (item.source === 'wikimedia') searchedArtwork = { item, url: null };
       beginSelection();
       updatePreviewLabels(item);
+    },
+    selectionFailed(next: string) {
+      if (lifetime.signal.aborted) return;
+      palettePending = false;
+      resultReady = false;
+      error = next;
+      publishShell();
+      renderSidebar();
     },
     showImage: setImage,
     pixelsReady(pixels: ImageData) {

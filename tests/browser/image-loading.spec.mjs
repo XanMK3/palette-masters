@@ -21,7 +21,7 @@ test('initial HTML preload matches the selected artwork and its request mode', a
   await expect(preload).toHaveAttribute('href', await selected.getAttribute('src'));
   await expect(preload).toHaveAttribute('crossorigin', 'anonymous');
   await expect(selected).toHaveAttribute('crossorigin', 'anonymous');
-  await expect(page.locator('#swatches code').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Copy palette color 1,/ })).toBeVisible();
 });
 
 test('artwork remains visible when CORS image requests fail', async ({ page }) => {
@@ -35,8 +35,37 @@ test('artwork remains visible when CORS image requests fail', async ({ page }) =
   await expect(selected).toHaveClass('loaded');
   await expect(selected).not.toHaveAttribute('crossorigin');
   await expect(selected).toHaveCSS('opacity', '1');
-  await page.locator('[data-template="poster"]').click();
+  await page.getByRole('tab', { name: 'Poster', exact: true }).click();
   await expect(page.frameLocator('#templatePreview').locator('#poster-artwork img')).toHaveClass(
     'loaded',
   );
+});
+
+test('missing artwork uses shared styles in both shell and preview', async ({ page }) => {
+  await page.route(/^https:\/\//, (route) => route.abort());
+  await page.goto('/');
+  await page.evaluate(async () => {
+    const { render } = await import('/node_modules/preact/dist/preact.mjs');
+    const { ImageError } = await import('/src/modules/artwork.tsx');
+    const host = document.createElement('div');
+    document.body.append(host);
+    render(ImageError({ label: 'Fixture image failure' }), host);
+  });
+  const missing = page
+    .getByRole('img', { name: 'Painting image unavailable', exact: true })
+    .filter({ hasText: 'Fixture image failure' });
+  await expect(missing).toHaveCSS('display', 'flex');
+  await expect(missing).toHaveCSS('font-style', 'normal');
+  await expect(missing).toHaveCSS('padding', '8px');
+  const frame = await (await page.locator('#templatePreview').elementHandle()).contentFrame();
+  await frame.evaluate(async () => {
+    const { imageError } = await import('/src/artwork-image.ts');
+    document.getElementById('themeStage').append(imageError('Fixture image failure'));
+  });
+  const previewMissing = frame
+    .getByRole('img', { name: 'Painting image unavailable', exact: true })
+    .filter({ hasText: 'Fixture image failure' });
+  await expect(previewMissing).toHaveCSS('display', 'flex');
+  await expect(previewMissing).toHaveCSS('font-style', 'normal');
+  await expect(previewMissing).toHaveCSS('padding', '8px');
 });

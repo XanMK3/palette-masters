@@ -41,18 +41,18 @@
   margin-top: 6px;
 }
 .missing-art {
-  display: flex !important;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: var(--shell-placeholder, var(--color-surface)) !important;
-  color: var(--shell-text, var(--color-surface-text-contrast)) !important;
+  background: var(--shell-placeholder, var(--color-surface));
+  color: var(--shell-text, var(--color-surface-text-contrast));
   text-align: center;
-  padding: 8px !important;
+  padding: 8px;
   min-height: 100%;
-  font-family: system-ui, sans-serif !important;
-  font-style: normal !important;
+  font-family: system-ui, sans-serif;
+  font-style: normal;
   line-height: 1.2;
   overflow: hidden;
 }

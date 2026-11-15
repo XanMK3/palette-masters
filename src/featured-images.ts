@@ -9,10 +9,8 @@
 export const FEATURED_IMAGE_FILENAMES: Readonly<Record<string, string>> = {
   Death_and_the_Maiden:
     'Egon Schiele - Tod und Mädchen - 3171 - Österreichische Galerie Belvedere.jpg',
-  Grande_Odalisque:
-    'Jean Auguste Dominique Ingres, La Grande Odalisque, 1814.jpg',
-  Psyche_and_Cupid:
-    'Image-François Pascal Simon Gérard 006.jpg',
+  Grande_Odalisque: 'Jean Auguste Dominique Ingres, La Grande Odalisque, 1814.jpg',
+  Psyche_and_Cupid: 'Image-François Pascal Simon Gérard 006.jpg',
   The_Garden_of_Earthly_Delights:
     "Hieronymus Bosch - The Garden of Earthly Delights - Garden of Earthly Delights (Ecclesia's Paradise).jpg",
   The_Third_of_May_1808: 'El tres de mayo de 1808 en Madrid.jpg',

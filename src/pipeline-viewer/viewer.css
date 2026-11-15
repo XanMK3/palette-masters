@@ -7,8 +7,8 @@
   border-radius: 7px;
   background: var(--shell-surface-raised);
   color: var(--shell-text);
-  padding: 7px 12px;
-  font-size: 13px;
+  padding: 7px var(--shell-space-panel);
+  font-size: var(--shell-font-body);
 }
 .pipeline-viewer button:focus-visible,
 .pipeline-viewer input:focus-visible,
@@ -38,7 +38,7 @@
 }
 .pv-duration,
 .pv-hint {
-  font-size: 12px;
+  font-size: var(--shell-font-control);
   color: var(--shell-text-muted);
 }
 .pv-painting {
@@ -62,7 +62,7 @@
   left: 10px;
   background: var(--shell-overlay);
   color: var(--shell-text-bright);
-  font-size: 11px;
+  font-size: var(--shell-font-small);
   padding: 3px 7px;
   border-radius: 4px;
   pointer-events: none;
@@ -72,7 +72,7 @@
   font-size: 16px;
   line-height: 1.35;
   min-height: 22px;
-  margin: 12px 0 8px;
+  margin: var(--shell-space-panel) 0 var(--shell-space-control);
 }
 .pv-swatches {
   display: flex;
@@ -94,10 +94,10 @@
   outline-offset: 2px;
 }
 .pv-swatch span {
-  font-size: 10px;
+  font-size: var(--shell-font-caption);
   color: var(--shell-text-bright);
   background: var(--shell-swatch-label);
-  padding: 2px 4px;
+  padding: 2px var(--shell-space-tight);
   border-radius: 3px;
 }
 .pv-rejected {
@@ -111,8 +111,8 @@
 .pv-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 12px 0 5px;
+  gap: var(--shell-space-control);
+  margin: var(--shell-space-panel) 0 5px;
   flex-wrap: wrap;
 }
 .pv-controls input {
@@ -120,7 +120,7 @@
   min-width: 80px;
 }
 .pv-controls output {
-  font-size: 11px;
+  font-size: var(--shell-font-small);
   min-width: 45px;
 }
 .pv-controls button[aria-pressed='true'] {
@@ -134,9 +134,9 @@
 .pv-roles {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: var(--shell-space-inline);
   flex-wrap: wrap;
-  margin-top: 6px;
+  margin-top: var(--shell-space-inline);
 }
 .pv-roles button {
   display: flex;
@@ -176,7 +176,7 @@
     padding: 7px 9px;
   }
   .pv-roles button {
-    font-size: 11px;
+    font-size: var(--shell-font-small);
   }
 }
 
@@ -186,39 +186,39 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  padding: 8px;
+  padding: var(--shell-space-control);
   flex-shrink: 0;
 }
 .pipeline-viewer nav > span {
   color: var(--shell-text-muted);
-  font-size: 12px;
+  font-size: var(--shell-font-control);
 }
 .pv-theme-card .pv-roles {
-  gap: 4px 8px;
+  gap: var(--shell-space-tight) var(--shell-space-control);
   justify-content: flex-start;
-  margin-top: 10px;
+  margin-top: var(--shell-space-group);
 }
 .pv-theme-card .pv-roles button {
   border: 0;
   padding: 0;
   background: transparent;
   color: inherit;
-  font-size: 10px;
-  gap: 4px;
+  font-size: var(--shell-font-caption);
+  gap: var(--shell-space-tight);
 }
 .pv-theme-card .pv-roles span {
   width: 9px;
   height: 9px;
 }
 .pipeline-viewer .advanced-pipeline {
-  margin-top: 16px;
+  margin-top: var(--shell-space-section);
   border-top: 1px solid var(--shell-border);
-  padding-top: 12px;
+  padding-top: var(--shell-space-panel);
 }
 @media (max-width: 650px) {
   .pipeline-viewer nav button {
-    padding: 6px;
-    font-size: 12px;
+    padding: var(--shell-space-inline);
+    font-size: var(--shell-font-control);
   }
   .pipeline-viewer .pipeline-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -230,10 +230,10 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px 8px;
+  gap: var(--shell-space-inline) var(--shell-space-control);
   font-size: 16px;
   line-height: 1.35;
-  margin: 12px 0 8px;
+  margin: var(--shell-space-panel) 0 var(--shell-space-control);
 }
 .pv-step-description .pv-caption,
 .pv-step-description .pv-selection {

@@ -67,3 +67,52 @@ test('sidebar mounts independently, emits intents, accepts state, and remounts c
   expect(result.empty).toBe(true);
   expect(result.optionsCount).toBeGreaterThan(1);
 });
+
+test('sidebar tab choice follows artwork identity rather than object identity', async ({
+  page,
+}) => {
+  await blankPage(page);
+  await page.evaluate(async () => {
+    const { mountSidebar } = await import('/src/modules/sidebar/index.ts');
+    const root = document.createElement('aside');
+    document.body.append(root);
+    const sidebar = mountSidebar(root, {
+      sources: { featuredDirectImage: () => null, resolveFeatured: async () => null },
+      actions: {
+        getCssVariables: () => null,
+        selectPainting() {},
+        changeMethod() {},
+        assignRole() {},
+        shuffle() {},
+        openPipeline() {},
+        openSearch() {},
+      },
+    });
+    window.showArtwork = (fileTitle) => {
+      const item = {
+        source: 'wikimedia',
+        title: 'Same title',
+        artist: 'Artist',
+        date: '',
+        commons: { fileTitle },
+      };
+      sidebar.update({
+        selection: item,
+        searchedArtwork: { item, url: null },
+        palette: null,
+        assignments: null,
+        method: 'octree-auto',
+        error: '',
+      });
+    };
+    window.showArtwork('File:First.jpg');
+  });
+  const curated = page.getByRole('button', { name: 'Selected art', exact: true });
+  await expect(curated).toHaveAttribute('aria-pressed', 'false');
+  await curated.click();
+  await expect(curated).toHaveAttribute('aria-pressed', 'true');
+  await page.evaluate(() => window.showArtwork('File:First.jpg'));
+  await expect(curated).toHaveAttribute('aria-pressed', 'true');
+  await page.evaluate(() => window.showArtwork('File:Second.jpg'));
+  await expect(curated).toHaveAttribute('aria-pressed', 'false');
+});

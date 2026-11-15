@@ -74,7 +74,7 @@ flowchart TB
 | `src/app/controller.ts` | Owns selected artwork and raster, extraction configuration, palette, role assignments, theme tokens, current template, pending state, and errors. Uses `ControllerPorts` for computation and UI output. |
 | `src/modules/sidebar/index.ts` | `mountSidebar(root, options)` returns `update(SidebarState)` and `dispose`. Owns gallery navigation and expansion animation; callbacks report selection, method, role, shuffle, and viewer intents. |
 | `src/modules/wikimedia-search/index.ts` | `mountWikimediaSearch(dialog, { service, onSelect })` returns `open`, `close`, and `dispose`. Owns debounced Wikidata suggestions, paginated Commons results, image preloading, and cancellation. |
-| `src/image-selection.ts` | Owns image loading, pixel access, stale-selection guards, and displayed blob URL lifetime. Reports progress through `SelectionView`. |
+| `src/image-selection.ts` | Owns image loading, pixel access, stale-selection guards, and displayed blob URL lifetime. Reports progress and current selection failures through `SelectionView`; owns cancellation and stale-result checks. |
 | `src/computation/client.ts` | `createComputation()` returns `run`, `cancel`, and `dispose`. Owns worker creation, request IDs, transfer of raster copies, and worker termination. |
 | `src/app/pipeline-adapter.ts` | Connects advanced extraction controls to the controller and wraps the imperative `PipelineViewer`; manages viewer focus and cleanup. |
 | `src/templates/bridge.ts` | `createTemplatePreview(frame)` returns `update(Partial<PreviewState>)` and `dispose`; retains state until the iframe is ready. |
@@ -139,7 +139,10 @@ Vite hot replacement disposes image selection and the shell. Shell unmounting
 cleans up the controller and its worker, sidebar, search, viewer adapter, preview
 bridge, and download adapter. Disposed shell callbacks no longer reach a controller.
 
-Image selection aborts pending work and releases displayed blob URLs. Search
+Image selection aborts pending work and releases displayed blob URLs. Its single
+stale-result guard suppresses both late successes and late failures. Current lookup
+or pixel-loading failures reach the controller through `selectionFailed`; the
+controller displays the error and leaves export disabled. Search
 aborts suggestions, result requests, and image preloads on cancellation or close.
 Sidebar cleanup removes animation resources and ignores late thumbnail results;
 shared featured lookups remain reusable rather than being cancelled by one view.

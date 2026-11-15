@@ -18,21 +18,21 @@
   border-radius: 10px;
   background: var(--shell-panel-background);
   box-shadow: 0 12px 30px var(--shell-shadow);
-  padding: 6px;
+  padding: var(--shell-space-inline);
 }
 .search-suggestions[hidden] {
   display: none;
 }
 .suggestion-heading {
-  padding: 7px 9px 4px;
+  padding: 7px 9px var(--shell-space-tight);
   color: var(--shell-text-muted);
-  font-size: 10px;
+  font-size: var(--shell-font-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 .search-suggestion {
-  padding: 8px 9px;
+  padding: var(--shell-space-control) 9px;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -44,10 +44,10 @@
   white-space: nowrap;
 }
 .search-suggestion strong {
-  font-size: 13px;
+  font-size: var(--shell-font-body);
 }
 .search-suggestion small {
-  font-size: 11px;
+  font-size: var(--shell-font-small);
   color: var(--shell-text-muted);
   margin-top: 3px;
 }
@@ -56,23 +56,23 @@
   background: var(--shell-surface-active);
 }
 .suggestion-status {
-  font-size: 11px;
+  font-size: var(--shell-font-small);
   color: var(--shell-text-muted);
-  margin: 8px 9px;
+  margin: var(--shell-space-control) 9px;
 }
 .search-gallery-title {
   font-size: 15px;
-  margin: 10px 0 8px;
+  margin: var(--shell-space-group) 0 var(--shell-space-control);
 }
 .search-status {
-  font-size: 12px;
+  font-size: var(--shell-font-control);
   color: var(--shell-text-muted);
-  margin: 10px 0 16px;
+  margin: var(--shell-space-group) 0 var(--shell-space-section);
 }
 .search-gallery {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--shell-space-panel);
 }
 #searchDialog .artwork-result {
   display: flex;
@@ -98,7 +98,7 @@
 }
 .artwork-result small {
   display: block;
-  margin-top: 4px;
+  margin-top: var(--shell-space-tight);
   color: var(--shell-text-muted);
 }
 .search-image-placeholder {

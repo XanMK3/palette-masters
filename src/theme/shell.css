@@ -1,6 +1,16 @@
 /* Midnight atelier: application UI tokens, independent of extracted template colors.
    Keep literal colors here so the shell can be rethemed without touching layout. */
 :root {
+  --shell-font-caption: 10px;
+  --shell-font-small: 11px;
+  --shell-font-control: 12px;
+  --shell-font-body: 13px;
+  --shell-space-tight: 4px;
+  --shell-space-inline: 6px;
+  --shell-space-control: 8px;
+  --shell-space-group: 10px;
+  --shell-space-panel: 12px;
+  --shell-space-section: 16px;
   --shell-background: #0f172a;
   --shell-surface-inset: #10192b;
   --shell-surface: #111b2e;

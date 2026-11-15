@@ -59,7 +59,7 @@ for (const viewport of [
     await page.evaluate(() => window.searchFixture.dispose());
 
     await loadArtworkFixture(page);
-    await page.locator('#view-pipeline').click();
+    await page.getByRole('button', { name: 'How this palette was extracted', exact: true }).click();
     const pipeline = page.locator('.pipeline-viewer');
     await pipeline.locator('summary').click();
     const headerBefore = await pipeline.locator('.dialog-header').boundingBox();
@@ -75,6 +75,8 @@ for (const viewport of [
     expect(bounds.y + bounds.height).toBeLessThanOrEqual(viewport.height);
     expect(bounds.width).toBeLessThanOrEqual(viewport.width);
     await pipeline.locator('.dialog-close').click();
-    await expect(page.locator('#view-pipeline')).toBeFocused();
+    await expect(
+      page.getByRole('button', { name: 'How this palette was extracted', exact: true }),
+    ).toBeFocused();
   });
 }

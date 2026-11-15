@@ -6,7 +6,10 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
     await page.emulateMedia({ reducedMotion });
     await page.goto('/');
     await loadArtworkFixture(page);
-    const card = page.locator('#paintings .work').first();
+    const card = page.getByRole('button', {
+      name: 'Select Girl with a Pearl Earring, Johannes Vermeer',
+      exact: true,
+    });
     const thumbnail = card.locator('img');
     await expect(thumbnail).toHaveClass('loaded');
     const count = await page.locator('#paintings .work').count();
