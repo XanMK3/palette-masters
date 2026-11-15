@@ -8,14 +8,17 @@ test('painting story covers available chapters for every preset without debug UI
   page.on('pageerror', (e) => errors.push(e.message));
   await page.route(/^https:\/\//, (r) => r.abort());
   await page.goto('/');
-  const trigger = page.locator('#view-pipeline');
+  const trigger = page.getByRole('button', { name: 'How this palette was extracted', exact: true });
   await expect(trigger).toBeDisabled();
   await loadArtworkFixture(page);
   const methods = await page
-    .locator('#method option')
+    .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+    .getByRole('option')
     .evaluateAll((items) => items.map((o) => o.value));
   for (const method of methods) {
-    await page.locator('#method').selectOption(method);
+    await page
+      .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+      .selectOption(method);
     await trigger.click();
     const dialog = page.getByRole('dialog');
     await expect(dialog.locator('.pv-painting canvas')).toBeVisible();
@@ -62,8 +65,10 @@ test('K-means story completes under twenty seconds with faithful seeking and ori
   });
   await loadArtworkFixture(page, Buffer.from(fixture, 'base64'));
   for (const method of ['oklab-kmeans-auto', 'oklab-kmeans-auto']) {
-    await page.locator('#method').selectOption(method);
-    await page.locator('#view-pipeline').click();
+    await page
+      .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+      .selectOption(method);
+    await page.getByRole('button', { name: 'How this palette was extracted', exact: true }).click();
     const d = page.getByRole('dialog');
     const step = d.getByLabel('Story step');
     await d.getByRole('button', { name: 'Find colors', exact: true }).click();
@@ -75,8 +80,13 @@ test('K-means story completes under twenty seconds with faithful seeking and ori
     await d.getByRole('button', { name: 'Original', exact: true }).click();
     expect(await d.locator('.pv-painting canvas').evaluate((c) => c.toDataURL())).not.toBe(first);
     await d.getByRole('button', { name: 'Original', exact: true }).click();
-    await d.locator('.pv-swatch').first().click();
-    await expect(d.locator('.pv-swatch').first()).toHaveAttribute('aria-pressed', 'true');
+    const colors = d.getByRole('group', { name: 'Colors in this step' }).getByRole('button');
+    const names = await colors.evaluateAll((buttons) =>
+      buttons.map((button) => button.getAttribute('aria-label')),
+    );
+    const color = d.getByRole('button', { name: names[0], exact: true });
+    await color.click();
+    await expect(color).toHaveAttribute('aria-pressed', 'true');
     expect(await d.locator('.pv-painting canvas').evaluate((c) => c.toDataURL())).not.toBe(first);
     await d.getByRole('button', { name: 'Restart', exact: true }).click();
     await d.getByRole('button', { name: 'Play', exact: true }).click();
@@ -86,7 +96,7 @@ test('K-means story completes under twenty seconds with faithful seeking and ori
     await expect(d.locator('.pv-theme-card')).toBeVisible();
     await page.keyboard.press('Escape');
   }
-  await page.locator('#view-pipeline').click();
+  await page.getByRole('button', { name: 'How this palette was extracted', exact: true }).click();
   await page.getByRole('button', { name: 'Find colors', exact: true }).click();
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   await page.screenshot({ path: '/tmp/painting-story.png' });
@@ -98,7 +108,7 @@ test('K-means story completes under twenty seconds with faithful seeking and ori
   await expect(d.getByRole('button', { name: 'Next', exact: true })).toBeEnabled();
   await page.keyboard.press('Escape');
   await page.clock.fastForward(20000);
-  await page.locator('#view-pipeline').click();
+  await page.getByRole('button', { name: 'How this palette was extracted', exact: true }).click();
   await expect(page.getByLabel('Story step')).toHaveValue('0');
 });
 
@@ -129,8 +139,10 @@ test('remaining methods animate fitting and selection with deterministic backwar
     ['slic-samples-farthest', 'farthest'],
   ];
   for (const [method, caption] of cases) {
-    await page.locator('#method').selectOption(method);
-    await page.locator('#view-pipeline').click();
+    await page
+      .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+      .selectOption(method);
+    await page.getByRole('button', { name: 'How this palette was extracted', exact: true }).click();
     const d = page.getByRole('dialog');
     await d
       .getByRole('button', {

@@ -42,10 +42,10 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
       firstCard: root.querySelector('.work'),
     };
   });
-  await expect(page.locator('#download-theme')).toBeEnabled();
-  await page.locator('[data-template="poster"]').click();
-  await expect(page.locator('[data-template="poster"]')).toHaveClass('active');
-  await page.locator('#btn-shuffle').click();
+  await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeEnabled();
+  await page.getByRole('tab', { name: 'Poster', exact: true }).click();
+  await expect(page.getByRole('tab', { name: 'Poster', exact: true })).toHaveClass('active');
+  await page.getByRole('button', { name: 'Shuffle Roles', exact: true }).click();
   expect(
     await page.evaluate(() => {
       const f = window.fixture;
@@ -56,7 +56,7 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
       );
     }),
   ).toBe(true);
-  await page.locator('#view-pipeline').click();
+  await page.getByRole('button', { name: 'How this palette was extracted', exact: true }).click();
   await expect(page.locator('.pipeline-viewer')).toBeVisible();
   await page.evaluate(() => {
     const f = window.fixture;
@@ -69,12 +69,17 @@ test('Preact shell preserves module hosts across updates and cleans up on remoun
   await page.evaluate(() => {
     window.fixture.shell = window.fixture.mount();
   });
-  await expect(page.locator('#download-theme')).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeDisabled();
   await page.locator('#openSearch').click();
   await expect(page.locator('#searchDialog')).toBeVisible();
   await page.locator('#closeSearch').click();
   await page.getByRole('button', { name: 'Selected art', exact: true }).click();
-  await page.locator('.work').first().click();
+  await page
+    .getByRole('button', {
+      name: 'Select Girl with a Pearl Earring, Johannes Vermeer',
+      exact: true,
+    })
+    .click();
   expect(await page.evaluate(() => window.fixture.selected.length)).toBe(1);
 });
 
@@ -234,4 +239,38 @@ test('painting changes retain the previous theme until replacement pixels arrive
     noReset: true,
     ready: { newPalette: true, updates: 1, canExport: true, pending: false },
   });
+});
+
+test('image workflow failures are displayed without unhandled rejections', async ({ page }) => {
+  await page.route('**/selection-failure', (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<div id="fixture"></div>' }),
+  );
+  await page.route(/^https:\/\//, (route) => route.abort());
+  await page.goto('/selection-failure');
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.evaluate(async () => {
+    const { createAppShell } = await import('/src/app/index.ts');
+    const { createImageSelection } = await import('/src/image-selection.ts');
+    const sources = {
+      featuredDirectImage: () => null,
+      resolveFeatured: async () => {
+        throw new Error('Selection failed');
+      },
+    };
+    const shell = createAppShell(document.getElementById('fixture'), {}, sources, {
+      selectPainting: (item) => images.selectPainting(item),
+    });
+    const images = createImageSelection({}, sources, shell);
+  });
+  await page
+    .getByRole('button', {
+      name: 'Select Girl with a Pearl Earring, Johannes Vermeer',
+      exact: true,
+    })
+    .click();
+  await expect(page.getByRole('alert')).toHaveText(
+    'Unable to select artwork: Commons lookup failed: Selection failed. Try another painting.',
+  );
+  expect(errors).toEqual([]);
 });

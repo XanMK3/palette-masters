@@ -6,7 +6,7 @@ test('Wikimedia search opens separately from preset browsing and restores focus'
   await page.goto('/');
   const opener = page.getByRole('button', { name: 'Wikimedia', exact: true });
   await expect(page.locator('aside #searchQuery')).toHaveCount(0);
-  await expect(page.locator('#movementPicker')).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Art period', exact: true })).toBeVisible();
   await opener.click();
   await expect(page.getByRole('dialog', { name: 'Search Wikimedia' })).toBeVisible();
   await expect(page.getByRole('combobox', { name: 'Search artist or painting' })).toBeFocused();
@@ -17,7 +17,12 @@ test('Wikimedia search opens separately from preset browsing and restores focus'
   await page.getByRole('button', { name: 'Close search' }).click();
   await expect(page.getByRole('dialog')).not.toBeVisible();
   await page.getByRole('button', { name: 'Selected art', exact: true }).click();
-  await expect(page.locator('#paintings .work').first()).toBeVisible();
+  await expect(
+    page.getByRole('button', {
+      name: 'Select Girl with a Pearl Earring, Johannes Vermeer',
+      exact: true,
+    }),
+  ).toBeVisible();
 });
 
 test('popup selection previews artwork, preserves browsing state and fits a laptop sidebar', async ({
@@ -58,7 +63,7 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
     );
   });
   const source = (name) => page.getByRole('button', { name, exact: true });
-  await page.locator('#movementPicker').selectOption('1');
+  await page.getByRole('combobox', { name: 'Art period', exact: true }).selectOption('1');
   const initialHeight = await page.locator('.artwork-browser').evaluate((el) => el.offsetHeight);
   await source('Wikimedia').click();
   await page.locator('#searchQuery').fill('Test');
@@ -68,10 +73,10 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
   await expect(page.locator('.searched-preview img')).toHaveClass('loaded');
   await expect(page.locator('.searched-preview')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.searched-caption')).toContainText('Test painting');
-  await expect(page.locator('#download-theme')).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Download theme', exact: true })).toBeEnabled();
   const palette = await page.locator('#swatches').textContent();
   await source('Selected art').click();
-  await expect(page.locator('#movementPicker')).toHaveValue('1');
+  await expect(page.getByRole('combobox', { name: 'Art period', exact: true })).toHaveValue('1');
   await source('Wikimedia').click();
   await page.keyboard.press('Escape');
   expect(await page.locator('#swatches').textContent()).toBe(palette);
@@ -89,7 +94,9 @@ test('popup selection previews artwork, preserves browsing state and fits a lapt
   await page.keyboard.press('Escape');
   await expect(page.locator('#openSearch')).toBeFocused();
   await source('Selected art').click();
-  await page.locator('.work').first().click();
+  await page
+    .getByRole('button', { name: 'Select Mona Lisa, Leonardo da Vinci', exact: true })
+    .click();
   await source('Wikimedia').click();
   await page.keyboard.press('Escape');
   await expect(page.locator('.searched-preview')).toHaveAttribute('aria-pressed', 'false');

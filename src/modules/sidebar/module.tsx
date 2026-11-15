@@ -7,7 +7,7 @@ import { DEFAULT_PAINTINGS, FEATURED_MOVEMENTS } from '../../featured-collection
 import { INITIAL_ARTWORK } from '../../initial-artwork.js';
 import { DEFAULT_PRESET, PRESET_IDS, PRESET_LABELS } from '../../extraction/presets.js';
 import { ROLE_KEYS, type ThemeRoleKey } from '../../theme.service.js';
-import type { ArtworkSelection } from '../../artwork-selection.js';
+import { artworkId, type ArtworkSelection } from '../../artwork-selection.js';
 import type { SidebarModule, SidebarOptions, SidebarState } from './contracts.js';
 
 function PaintingImage({
@@ -278,10 +278,17 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
   );
 }
 function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarState }) {
-  const [source, setSource] = useState<'curated' | 'wikimedia'>('curated');
-  useLayoutEffect(() => {
-    if (state.selection?.source) setSource(state.selection.source);
-  }, [state.selection]);
+  const selectionKey = state.selection ? artworkId(state.selection) : null;
+  const [sourceOverride, setSourceOverride] = useState<{
+    selectionKey: typeof selectionKey;
+    source: 'curated' | 'wikimedia';
+  } | null>(null);
+  const source =
+    sourceOverride && sourceOverride.selectionKey === selectionKey
+      ? sourceOverride.source
+      : (state.selection?.source ?? 'curated');
+  const setSource = (source: 'curated' | 'wikimedia') =>
+    setSourceOverride({ selectionKey, source });
   const searched = state.searchedArtwork;
   const active = !!searched && state.selection === searched.item;
   return (

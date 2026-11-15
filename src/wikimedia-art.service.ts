@@ -159,10 +159,6 @@ export class WikimediaApiError extends Error {
 interface ApiErrorShape {
   error?: { info?: string; code?: string };
 }
-interface SnakValue {
-  id?: string;
-  time?: string;
-}
 interface Statement {
   rank?: string;
   mainsnak?: { datavalue?: { value?: unknown } };
@@ -218,6 +214,100 @@ interface WikipediaSummaryResponse {
   content_urls?: { desktop?: { page?: string } };
 }
 
+// Validate only consumed fields; unknown API additions remain compatible.
+type Check = (value: unknown) => boolean;
+function record(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+const stringValue: Check = (value) => typeof value === 'string';
+const numberValue: Check = (value) => typeof value === 'number' && Number.isFinite(value);
+const optional =
+  (check: Check): Check =>
+  (value) =>
+    value === undefined || check(value);
+const arrayOf =
+  (check: Check): Check =>
+  (value) =>
+    Array.isArray(value) && value.every(check);
+const dictionary =
+  (check: Check): Check =>
+  (value) =>
+    record(value) && Object.values(value).every(check);
+const fields =
+  (checks: Record<string, Check>): Check =>
+  (value) =>
+    record(value) && Object.entries(checks).every(([key, check]) => check(value[key]));
+const optionalString = optional(stringValue);
+const apiError = fields({ info: optionalString, code: optionalString });
+const statement = fields({
+  rank: optionalString,
+  mainsnak: optional(fields({ datavalue: optional(fields({ value: () => true })) })),
+});
+const entityRecord = fields({
+  id: optionalString,
+  missing: optionalString,
+  labels: optional(dictionary(fields({ value: stringValue }))),
+  descriptions: optional(dictionary(fields({ value: stringValue }))),
+  sitelinks: optional(dictionary(fields({ title: stringValue }))),
+  claims: optional(dictionary(arrayOf(statement))),
+});
+function isSearchResponse(value: unknown): value is SearchResponse {
+  return fields({
+    search: optional(
+      arrayOf(fields({ id: optionalString, label: optionalString, description: optionalString })),
+    ),
+  })(value);
+}
+function isEntitiesResponse(value: unknown): value is EntitiesResponse {
+  return fields({ entities: optional(dictionary(entityRecord)) })(value);
+}
+function isCommonsResponse(value: unknown): value is CommonsResponse {
+  return fields({
+    continue: optional(dictionary((v) => stringValue(v) || numberValue(v))),
+    query: optional(
+      fields({
+        pages: optional(
+          dictionary(
+            fields({
+              index: optional(numberValue),
+              title: optionalString,
+              missing: optionalString,
+              imageinfo: optional(
+                arrayOf(
+                  fields({
+                    url: optionalString,
+                    thumburl: optionalString,
+                    descriptionurl: optionalString,
+                    extmetadata: optional(dictionary(fields({ value: optionalString }))),
+                  }),
+                ),
+              ),
+            }),
+          ),
+        ),
+      }),
+    ),
+  })(value);
+}
+function isSparqlResponse(value: unknown): value is SparqlResponse {
+  return fields({
+    results: optional(
+      fields({ bindings: optional(arrayOf(dictionary(fields({ value: stringValue })))) }),
+    ),
+  })(value);
+}
+function isSummaryResponse(value: unknown): value is WikipediaSummaryResponse {
+  return fields({
+    title: optionalString,
+    description: optionalString,
+    extract: optionalString,
+    wikibase_item: optionalString,
+    thumbnail: optional(fields({ source: optionalString })),
+    originalimage: optional(fields({ source: optionalString })),
+    content_urls: optional(fields({ desktop: optional(fields({ page: optionalString })) })),
+  })(value);
+}
+
 const WIKIDATA_API = 'https://www.wikidata.org/w/api.php';
 const COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
 const SPARQL_API = 'https://query.wikidata.org/sparql';
@@ -251,17 +341,17 @@ function idsOfClaims(entity: EntityRecord, property: string): string[] {
   const values = entity.claims?.[property] ?? [];
   return values
     .filter((s) => s.rank !== 'deprecated')
-    .map((s) => (s.mainsnak?.datavalue?.value as SnakValue | undefined)?.id)
+    .map((s) => entityId(s.mainsnak?.datavalue?.value))
     .filter((id): id is string => typeof id === 'string' && QID_RE.test(id));
 }
 
 function entityId(value: unknown): string | null {
-  const id = (value as SnakValue | null)?.id;
+  const id = record(value) ? value.id : undefined;
   return typeof id === 'string' && QID_RE.test(id) ? id : null;
 }
 
 function yearOf(value: unknown): number | null {
-  const time = (value as SnakValue | null)?.time;
+  const time = record(value) ? value.time : undefined;
   const match = typeof time === 'string' ? time.match(/^([+-])(\d{4,})-/) : null;
   if (!match) return null;
   const year = Number(match[2]) * (match[1] === '-' ? -1 : 1);
@@ -612,6 +702,7 @@ export class WikimediaArtService {
 
   private async request<T>(
     url: string,
+    validate: (value: unknown) => value is T,
     options: RequestOptions = {},
     accept = 'application/json',
   ): Promise<T> {
@@ -628,13 +719,21 @@ export class WikimediaArtService {
           res.headers.get('Retry-After'),
         );
       }
-      const data = (await res.json()) as T & ApiErrorShape;
-      if (data.error) {
+      const data: unknown = await res.json();
+      if (!record(data) || (data.error !== undefined && !apiError(data.error))) {
+        throw new WikimediaApiError('Malformed Wikimedia response', res.status);
+      }
+      if (record(data.error)) {
         throw new WikimediaApiError(
-          data.error.info ?? data.error.code ?? 'Wikimedia API error',
+          typeof data.error.info === 'string'
+            ? data.error.info
+            : typeof data.error.code === 'string'
+              ? data.error.code
+              : 'Wikimedia API error',
           res.status,
         );
       }
+      if (!validate(data)) throw new WikimediaApiError('Malformed Wikimedia response', res.status);
       return data;
     };
     // Never share a cached promise across callers with independent AbortSignals.
@@ -665,7 +764,7 @@ export class WikimediaArtService {
       type: 'item',
       limit: String(bounded(options.limit, 15, 1, 50)),
     });
-    const response = await this.request<SearchResponse>(url, options);
+    const response = await this.request(url, isSearchResponse, options);
     return (response.search ?? [])
       .filter((hit) => hit.id && QID_RE.test(hit.id))
       .map((hit) => ({
@@ -688,7 +787,7 @@ export class WikimediaArtService {
       languages: this.language,
       sitefilter: site,
     });
-    const response = await this.request<EntitiesResponse>(url, options);
+    const response = await this.request(url, isEntitiesResponse, options);
     const raw = response.entities?.[id];
     if (!raw || raw.missing !== undefined) return null;
     const classes = idsOfClaims(raw, 'P31');
@@ -740,7 +839,7 @@ export class WikimediaArtService {
       props: 'labels',
       languages: this.language,
     });
-    const response = await this.request<EntitiesResponse>(url, options);
+    const response = await this.request(url, isEntitiesResponse, options);
     const result: Record<string, string> = {};
     for (const [id, item] of Object.entries(response.entities ?? {})) {
       if (item.missing === undefined) result[id] = item.labels?.[this.language]?.value ?? id;
@@ -777,7 +876,7 @@ export class WikimediaArtService {
       iiurlwidth: String(bounded(options.thumbnailWidth, 320, 100, 1600)),
       iiextmetadatafilter: 'LicenseShortName|LicenseUrl|Artist|ImageDescription',
     });
-    const response = await this.request<CommonsResponse>(url, options);
+    const response = await this.request(url, isCommonsResponse, options);
     const images = Object.values(response.query?.pages ?? {})
       .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
       .map(mapCommonsImage)
@@ -800,7 +899,7 @@ export class WikimediaArtService {
       iiurlwidth: String(bounded(options.thumbnailWidth, 600, 100, 1600)),
       iiextmetadatafilter: 'LicenseShortName|LicenseUrl|Artist|ImageDescription',
     });
-    const response = await this.request<CommonsResponse>(url, options);
+    const response = await this.request(url, isCommonsResponse, options);
     return (
       Object.values(response.query?.pages ?? {})
         .map(mapCommonsImage)
@@ -829,8 +928,9 @@ export class WikimediaArtService {
       SERVICE wikibase:label { bd:serviceParam wikibase:language "${this.language}". }
     } LIMIT ${limit}`;
     const url = SPARQL_API + '?' + new URLSearchParams({ query, format: 'json' });
-    const data = await this.request<SparqlResponse>(
+    const data = await this.request(
       url,
+      isSparqlResponse,
       options,
       'application/sparql-results+json',
     );
@@ -859,7 +959,7 @@ export class WikimediaArtService {
     const title = safeQuery(pageTitle).replace(/ /g, '_');
     const url = `https://${this.language}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
     try {
-      const response = await this.request<WikipediaSummaryResponse>(url, options);
+      const response = await this.request(url, isSummaryResponse, options);
       return {
         title: response.title ?? pageTitle,
         description: response.description ?? null,

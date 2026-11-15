@@ -8,7 +8,7 @@ import { EMBEDDED_ART_IMAGES } from '../embedded-art.js';
 
 export function ImageError({ label, artworkKey }: { label: string; artworkKey?: string }) {
   return (
-    <div class="placeholder missing-art" role="img" aria-label="Painting image unavailable">
+    <div class="missing-art" role="img" aria-label="Painting image unavailable">
       <strong class="missing-glyph">▧</strong>
       <small>Artwork image unavailable</small>
       <small class="missing-reason">{label}</small>

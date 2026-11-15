@@ -37,7 +37,7 @@ test('movement dropdown renders the catalog and preserves selection across galle
   });
   await venus.click();
   await expect(venus).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#swatches code').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Copy palette color 1,/ })).toBeVisible();
   await picker.selectOption('2');
   await picker.selectOption('1');
   await expect(venus).toHaveAttribute('aria-pressed', 'true');
@@ -50,7 +50,7 @@ test('movement dropdown renders the catalog and preserves selection across galle
   await defaultVenus.click();
   await expect(defaultVenus).toHaveAttribute('aria-pressed', 'true');
   await expect(picker).toHaveValue('');
-  await expect(page.locator('#swatches code').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Copy palette color 1,/ })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page

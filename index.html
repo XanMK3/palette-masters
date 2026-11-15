@@ -20,7 +20,7 @@
         color: var(--shell-text);
         border: 1px solid var(--shell-border-strong);
         border-radius: 5px;
-        font-size: 11px;
+        font-size: var(--shell-font-small);
       }
       .swatch-column select:disabled {
         opacity: 1;
@@ -96,7 +96,7 @@
         display: flex;
         align-items: center;
         gap: 11px;
-        padding: 12px 16px;
+        padding: var(--shell-space-panel) var(--shell-space-section);
         border-bottom: 1px solid var(--shell-border);
       }
       .brandmark {
@@ -116,17 +116,17 @@
       }
       .live {
         margin-left: auto;
-        font-size: 10px;
+        font-size: var(--shell-font-caption);
         color: var(--shell-text-muted);
         border: 1px solid var(--shell-border-strong);
         border-radius: 30px;
-        padding: 5px 8px;
+        padding: 5px var(--shell-space-control);
       }
       .sideinner {
-        padding: 12px;
+        padding: var(--shell-space-panel);
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: var(--shell-space-panel);
         overflow-y: auto;
         flex: 1;
         min-height: 0;
@@ -137,13 +137,13 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: var(--shell-space-group);
       }
       .palette-copy-actions {
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 8px;
+        gap: var(--shell-space-control);
       }
       .palette-copy-actions [role='status'] {
         order: -1;
@@ -152,11 +152,11 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        padding: 4px 0;
+        padding: var(--shell-space-tight) 0;
         border: 0;
         background: transparent;
         color: var(--shell-accent);
-        font-size: 11px;
+        font-size: var(--shell-font-small);
         white-space: nowrap;
       }
       .palette-action svg {
@@ -172,27 +172,27 @@
         min-width: 0;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: var(--shell-space-inline);
       }
       .swatches > .tiny {
         grid-column: 1 / -1;
       }
       .tiny {
-        font-size: 11px;
+        font-size: var(--shell-font-small);
         color: var(--shell-text-muted);
         line-height: 1.5;
       }
       .sidebar-panel {
         flex-shrink: 0;
         min-width: 0;
-        padding: 12px;
+        padding: var(--shell-space-panel);
         background: var(--shell-section-surface);
         border-radius: 12px;
       }
       .swatches {
         display: grid;
         grid-template-columns: repeat(var(--swatch-count, 5), minmax(0, 1fr));
-        gap: 8px;
+        gap: var(--shell-space-control);
         min-height: 60px;
       }
       .swatch {
@@ -210,15 +210,17 @@
         border: 1px solid var(--shell-swatch-border);
         background: linear-gradient(120deg, var(--shell-placeholder), var(--shell-placeholder-end));
       }
-      .field, .palette-field {
+      .field,
+      .palette-field {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: var(--shell-space-inline);
         flex: 1;
       }
-      .field label, .palette-title-label {
+      .field label,
+      .palette-title-label {
         color: var(--shell-text-muted);
-        font-size: 10px;
+        font-size: var(--shell-font-caption);
         letter-spacing: 0.7px;
         text-transform: uppercase;
       }
@@ -229,13 +231,13 @@
         border: 1px solid var(--shell-border);
         color: var(--shell-text);
         border-radius: 8px;
-        padding: 8px;
-        font-size: 12px;
+        padding: var(--shell-space-control);
+        font-size: var(--shell-font-control);
         min-width: 0;
       }
       .fieldrow {
         display: flex;
-        gap: 10px;
+        gap: var(--shell-space-group);
         align-items: end;
       }
       .tabs button.active,
@@ -248,9 +250,9 @@
         border: 1px solid var(--shell-border);
         background: transparent;
         color: var(--shell-text);
-        padding: 9px 12px;
+        padding: 9px var(--shell-space-panel);
         border-radius: 8px;
-        font-size: 12px;
+        font-size: var(--shell-font-control);
       }
       .btn:hover {
         background: var(--shell-surface-active);
@@ -267,29 +269,29 @@
         gap: 5px;
         background: var(--shell-surface-inset);
         border-radius: 9px;
-        padding: 4px;
+        padding: var(--shell-space-tight);
         border: 1px solid var(--shell-border);
       }
       .tabs button {
-        padding: 10px;
+        padding: var(--shell-space-group);
         border: 0;
         color: var(--shell-text-muted);
         border-radius: 6px;
         background: transparent;
-        font-size: 12px;
+        font-size: var(--shell-font-control);
       }
       .movement-picker {
         display: block;
         width: 100%;
         min-width: 0;
         margin: 0 0 14px;
-        padding: 8px;
+        padding: var(--shell-space-control);
         border: 1px solid var(--shell-border);
         border-radius: 7px;
         background: var(--shell-surface-raised);
         color: var(--shell-text);
         font: inherit;
-        font-size: 12px;
+        font-size: var(--shell-font-control);
         text-overflow: ellipsis;
         color-scheme: dark;
       }
@@ -309,8 +311,8 @@
         border-radius: 5px;
         background: var(--shell-surface-raised);
         color: var(--shell-accent);
-        padding: 6px 8px;
-        font-size: 10px;
+        padding: var(--shell-space-inline) var(--shell-space-control);
+        font-size: var(--shell-font-caption);
       }
       .works {
         position: relative;
@@ -322,15 +324,15 @@
       }
       .artwork-source-switch {
         display: flex;
-        gap: 4px;
+        gap: var(--shell-space-tight);
         padding: 3px;
-        margin-bottom: 10px;
+        margin-bottom: var(--shell-space-group);
         border: 1px solid var(--shell-border);
         border-radius: 8px;
       }
       .artwork-source-switch button {
         flex: 1;
-        padding: 6px;
+        padding: var(--shell-space-inline);
         border: 0;
         border-radius: 5px;
         background: transparent;
@@ -345,7 +347,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: var(--shell-space-inline);
         border: 1px solid var(--shell-border);
         color: var(--shell-text);
       }
@@ -355,7 +357,7 @@
       .artwork-browser .movement-picker {
         width: 100%;
         height: 34px;
-        margin: 0 0 10px;
+        margin: 0 0 var(--shell-space-group);
       }
       .artwork-browser .works,
       .searched-artwork {
@@ -413,7 +415,7 @@
         object-fit: contain;
       }
       .searched-caption {
-        padding: 8px 10px;
+        padding: var(--shell-space-control) var(--shell-space-group);
         width: 100%;
         flex-shrink: 0;
       }
@@ -426,11 +428,11 @@
         text-overflow: ellipsis;
       }
       .searched-caption strong {
-        font-size: 12px;
+        font-size: var(--shell-font-control);
       }
       .searched-caption span,
       .searched-caption small {
-        font-size: 10px;
+        font-size: var(--shell-font-caption);
         color: var(--shell-text-muted);
       }
       .artwork-empty,
@@ -438,9 +440,9 @@
         display: grid;
         place-items: center;
         height: 100%;
-        padding: 16px;
+        padding: var(--shell-space-section);
         color: var(--shell-text-muted);
-        font-size: 12px;
+        font-size: var(--shell-font-control);
         text-align: center;
       }
       .artwork-source-switch button:focus-visible,
@@ -478,7 +480,7 @@
       .painting-overlay .painting-artist {
         display: block;
         margin-top: 3px;
-        font-size: 12px;
+        font-size: var(--shell-font-control);
         color: var(--shell-accent);
       }
       .painting-close {
@@ -540,7 +542,7 @@
       .work span {
         display: block;
         padding: 7px;
-        font-size: 10px;
+        font-size: var(--shell-font-caption);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -565,7 +567,7 @@
       .searchbox {
         display: flex;
         gap: 7px;
-        margin: 12px 0;
+        margin: var(--shell-space-panel) 0;
       }
       .searchbox input {
         flex: 1;
@@ -580,7 +582,7 @@
       }
       .result {
         display: flex;
-        gap: 10px;
+        gap: var(--shell-space-group);
         align-items: center;
         width: 100%;
         padding: 9px;
@@ -589,7 +591,7 @@
         border: 1px solid var(--shell-border);
         border-radius: 7px;
         text-align: left;
-        font-size: 12px;
+        font-size: var(--shell-font-control);
       }
       .result img {
         width: 42px;
@@ -601,7 +603,7 @@
       .result small {
         display: block;
         color: var(--shell-text-muted);
-        font-size: 10px;
+        font-size: var(--shell-font-caption);
         margin-top: 2px;
       }
       .result:hover {
@@ -610,14 +612,14 @@
       .workspanel {
         border: 1px solid var(--shell-border);
         border-radius: 8px;
-        padding: 10px;
-        margin-top: 8px;
+        padding: var(--shell-space-group);
+        margin-top: var(--shell-space-control);
       }
       .workspanel button {
         display: block;
         text-align: left;
         width: 100%;
-        margin: 4px 0;
+        margin: var(--shell-space-tight) 0;
       }
       .hidden {
         display: none !important;
@@ -638,13 +640,13 @@
         align-items: center;
         justify-content: flex-end;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: var(--shell-space-panel);
         min-width: 0;
       }
       #download-theme {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: var(--shell-space-inline);
         white-space: nowrap;
       }
       .download-dropdown {
@@ -656,7 +658,7 @@
         left: 0;
         z-index: 10;
         min-width: 180px;
-        padding: 4px;
+        padding: var(--shell-space-tight);
         border: 1px solid var(--shell-border);
         border-radius: 8px;
         background: var(--shell-surface);
@@ -664,13 +666,13 @@
       }
       .download-options button {
         width: 100%;
-        padding: 9px 12px;
+        padding: 9px var(--shell-space-panel);
         border: 0;
         border-radius: 4px;
         background: transparent;
         color: var(--shell-text);
         text-align: left;
-        font-size: 12px;
+        font-size: var(--shell-font-control);
         cursor: pointer;
       }
       .download-options button:hover,
@@ -683,17 +685,17 @@
       .workspace-top {
         flex-shrink: 0;
         display: flex;
-        gap: 10px;
+        gap: var(--shell-space-group);
         justify-content: space-between;
         align-items: center;
-        padding: 12px 16px;
+        padding: var(--shell-space-panel) var(--shell-space-section);
         border-bottom: 1px solid var(--shell-border);
       }
       .template-tabs {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
-        padding: 4px;
+        gap: var(--shell-space-tight);
+        padding: var(--shell-space-tight);
         margin: -1px;
         border: 1px solid var(--shell-border);
         border-radius: 9px;
@@ -703,13 +705,13 @@
         border: 0;
         background: transparent;
         color: var(--shell-accent);
-        padding: 9px 12px;
+        padding: 9px var(--shell-space-panel);
         border-radius: 6px;
-        font-size: 11px;
+        font-size: var(--shell-font-small);
       }
       .stage-area {
         background: var(--shell-background);
-        padding: 16px;
+        padding: var(--shell-space-section);
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -734,12 +736,12 @@
         outline-offset: 3px;
       }
       .alert {
-        font-size: 11px;
+        font-size: var(--shell-font-small);
         line-height: 1.6;
         color: var(--shell-warning-text);
         border: 1px solid var(--shell-warning-border);
         background: var(--shell-warning-background);
-        padding: 10px;
+        padding: var(--shell-space-group);
         border-radius: 8px;
       }
       .single-line {
@@ -772,11 +774,13 @@
         .works {
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
-        .sideinner, .sidehead {
-          padding: 8px;
+        .sideinner,
+        .sidehead {
+          padding: var(--shell-space-control);
         }
-        .stage-area, .workspace-top {
-          padding: 8px;
+        .stage-area,
+        .workspace-top {
+          padding: var(--shell-space-control);
         }
       }
       .work .image-holder {
@@ -784,8 +788,8 @@
         min-height: 87px;
       }
       .work .loading-art {
-        font-size: 10px;
-        padding: 4px;
+        font-size: var(--shell-font-caption);
+        padding: var(--shell-space-tight);
       }
       .work .loading-art a {
         display: none;
@@ -807,14 +811,14 @@
       .pipeline-fields {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        margin: 12px 0;
+        gap: var(--shell-space-control);
+        margin: var(--shell-space-panel) 0;
       }
       .pipeline-fields label {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        font-size: 12px;
+        gap: var(--shell-space-tight);
+        font-size: var(--shell-font-control);
       }
       .pipeline-fields label[hidden] {
         display: none;
@@ -823,7 +827,7 @@
       .pipeline-fields select {
         width: 100%;
         min-width: 0;
-        padding: 6px;
+        padding: var(--shell-space-inline);
         color: inherit;
         background: transparent;
         border: 1px solid var(--shell-border-emphasis);
@@ -832,9 +836,9 @@
       .pipeline-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        font-size: 12px;
-        margin: 8px 0;
+        gap: var(--shell-space-control);
+        font-size: var(--shell-font-control);
+        margin: var(--shell-space-control) 0;
       }
       .pipeline-actions button,
       .pipeline-actions select {
@@ -845,7 +849,7 @@
         border-radius: 4px;
       }
       .advanced-pipeline {
-        margin-top: 12px;
+        margin-top: var(--shell-space-panel);
       }
       .advanced-pipeline summary {
         cursor: pointer;
@@ -853,7 +857,7 @@
       .palette-title {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: var(--shell-space-inline);
       }
       .palette-help {
         display: inline-flex;

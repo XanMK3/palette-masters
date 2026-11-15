@@ -30,8 +30,8 @@ dialog.pipeline-viewer {
   align-items: center;
   justify-content: space-between;
   flex: 0 0 auto;
-  gap: 16px;
-  padding: 16px 22px;
+  gap: var(--shell-space-section);
+  padding: var(--shell-space-section) 22px;
   border-bottom: 1px solid var(--shell-border);
 }
 .dialog-header h2 {
@@ -46,7 +46,7 @@ dialog.pipeline-viewer {
   flex: 0 0 40px;
   width: 40px;
   height: 40px;
-  padding: 10px;
+  padding: var(--shell-space-group);
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
@@ -89,7 +89,7 @@ dialog.pipeline-viewer {
 }
 .search-view .search-body {
   flex: 1;
-  padding-top: 4px;
+  padding-top: var(--shell-space-tight);
 }
 .dialog-header nav {
   min-width: 0;
@@ -104,16 +104,16 @@ dialog.pipeline-viewer {
     height: min(640px, calc(100dvh - 16px));
   }
   .app-dialog .dialog-header {
-    padding: 12px;
-    gap: 6px;
+    padding: var(--shell-space-panel);
+    gap: var(--shell-space-inline);
   }
   .app-dialog .dialog-body {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: var(--shell-space-panel);
+    padding-right: var(--shell-space-panel);
   }
   .search-view > .searchbox,
   .search-view > p {
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-left: var(--shell-space-panel);
+    margin-right: var(--shell-space-panel);
   }
 }

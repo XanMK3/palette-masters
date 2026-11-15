@@ -16,7 +16,7 @@ const node = (name: string, className?: string, text?: string): HTMLElement => {
  * Try both official Wikimedia file hosts, then show a useful source link.
  */
 export function imageError(label: string, key?: string): HTMLElement {
-  const wrapper = node('div', 'placeholder missing-art');
+  const wrapper = node('div', 'missing-art');
   wrapper.setAttribute('role', 'img');
   wrapper.setAttribute('aria-label', 'Painting image unavailable');
   const glyph = node('strong', 'missing-glyph', '▧');

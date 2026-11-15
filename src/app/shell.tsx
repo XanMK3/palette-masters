@@ -68,7 +68,10 @@ function App({ art, sources, actions, state, connect }: Props) {
         getCssVariables: () => controller.current?.sidebarActions.getCssVariables() ?? null,
         openSearch: () => search.current?.open(),
         selectPainting: (item) => {
-          void actions.selectPainting({ ...item, source: item.source ?? 'curated' });
+          controller.current?.sidebarActions.selectPainting({
+            ...item,
+            source: item.source ?? 'curated',
+          });
         },
         changeMethod: (method, label) =>
           controller.current?.sidebarActions.changeMethod(method, label),
@@ -80,7 +83,7 @@ function App({ art, sources, actions, state, connect }: Props) {
     const searchModule = mountWikimediaSearch(dialog.current!, {
       service: art,
       onSelect: (item) => {
-        void actions.selectPainting({ ...item, source: 'wikimedia' });
+        controller.current?.sidebarActions.selectPainting({ ...item, source: 'wikimedia' });
       },
     });
     search.current = searchModule;
@@ -274,6 +277,7 @@ export function createAppShell(
   );
   return {
     selectionStarted: (item) => controller?.selectionStarted(item),
+    selectionFailed: (message) => controller?.selectionFailed(message),
     showImage: (url, title, key) => controller?.showImage(url, title, key),
     pixelsReady: (pixels) => controller?.pixelsReady(pixels),
     dispose() {
