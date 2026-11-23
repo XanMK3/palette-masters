@@ -1,5 +1,6 @@
 import type { ArtworkSelection } from '../../artwork-selection.js';
 import type { ArtworkSources } from '../../artwork-sources.js';
+import type { PaletteSize } from '../../extraction/types.js';
 import type { PaletteMethod } from '../../palette.service.js';
 import type { RoleAssignments, ThemeRoleKey } from '../../theme.service.js';
 
@@ -18,6 +19,7 @@ export interface SidebarState {
   readonly palette: SidebarPalette | null;
   readonly assignments: Readonly<RoleAssignments> | null;
   readonly method: PaletteMethod;
+  readonly paletteSize: PaletteSize;
   readonly error: string;
 }
 export interface SidebarActions {
@@ -25,6 +27,7 @@ export interface SidebarActions {
   openSearch?(): void;
   selectPainting(item: ArtworkSelection): void;
   changeMethod(method: PaletteMethod, label: string): void;
+  changePaletteSize(size: PaletteSize): void;
   assignRole(role: ThemeRoleKey, index: number): void;
   shuffle(): void;
   openPipeline(): void;

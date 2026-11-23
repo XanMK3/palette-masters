@@ -75,6 +75,7 @@ function App({ art, sources, actions, state, connect }: Props) {
         },
         changeMethod: (method, label) =>
           controller.current?.sidebarActions.changeMethod(method, label),
+        changePaletteSize: (size) => controller.current?.sidebarActions.changePaletteSize(size),
         assignRole: (role, index) => controller.current?.sidebarActions.assignRole(role, index),
         shuffle: () => controller.current?.sidebarActions.shuffle(),
         openPipeline: () => controller.current?.sidebarActions.openPipeline(),

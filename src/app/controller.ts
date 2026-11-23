@@ -5,7 +5,7 @@ import type { ComputationInput } from '../computation/contracts.js';
 import type { ThemeResult } from '../extraction/types.js';
 import { DEFAULT_PRESET, PRESET_LABELS } from '../extraction/presets.js';
 import { TEMPLATE_USAGE } from '../theme/validation.js';
-import type { PipelineConfig } from '../extraction/types.js';
+import type { PaletteSize, PipelineConfig } from '../extraction/types.js';
 import type { ArtworkSelection } from '../artwork-selection.js';
 import type { AppActions } from './contracts.js';
 import type { PaletteMethod, PaletteResult } from '../palette.service.js';
@@ -28,7 +28,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   let palette: PaletteResult | null = null;
   let appliedThemeTokens: Record<string, string> | null = null;
   let assignments: RoleAssignments | null = null;
-  const paletteSize = 5;
+  let paletteSize: PaletteSize = 5;
   let method: PaletteMethod = DEFAULT_PRESET;
   let template: 'landing' | 'magazine' | 'poster' = 'landing';
   let userMapping = false;
@@ -69,6 +69,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
       palette,
       assignments,
       method,
+      paletteSize,
       error,
       palettePending: palettePending || !resultReady,
     });
@@ -171,7 +172,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   }
   function changeConfiguration(config: PipelineConfig) {
     if (lifetime.signal.aborted) return;
-    customConfiguration = config;
+    customConfiguration = { ...config, count: paletteSize };
     updatePalette(pipelineViewer.isOpen);
   }
 
@@ -198,7 +199,7 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
   function getCssVariables(): string | null {
     if (lifetime.signal.aborted || !resultReady || palettePending || !appliedThemeTokens)
       return null;
-    return exportCssVariables(appliedThemeTokens);
+    return exportCssVariables(appliedThemeTokens, paletteSize);
   }
   function downloadCssVariables() {
     const css = getCssVariables();
@@ -216,6 +217,13 @@ export function createController(ports: ControllerPorts, actions: AppActions) {
       methodLabel = label;
       customConfiguration = undefined;
       pipelineViewer.preset(method);
+      if (imageData) updatePalette();
+      else renderSidebar();
+    },
+    changePaletteSize(next) {
+      if (lifetime.signal.aborted || next === paletteSize) return;
+      paletteSize = next;
+      if (customConfiguration) customConfiguration = { ...customConfiguration, count: next };
       if (imageData) updatePalette();
       else renderSidebar();
     },

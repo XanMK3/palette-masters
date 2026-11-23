@@ -235,6 +235,59 @@
         font-size: var(--shell-font-control);
         min-width: 0;
       }
+      .settings-heading {
+        color: var(--shell-text);
+        font-size: var(--shell-font-body);
+        font-weight: 600;
+        margin-block-end: var(--shell-space-group);
+      }
+      .settings-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--shell-space-group);
+        align-items: end;
+      }
+      .settings-row .field {
+        flex: 1 1 160px;
+        min-width: 0;
+      }
+      .settings-row select {
+        text-overflow: ellipsis;
+      }
+      .palette-size-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--shell-space-inline);
+      }
+      .palette-size-field > span {
+        color: var(--shell-text-muted);
+        font-size: var(--shell-font-caption);
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+      }
+      .palette-size-switch {
+        display: flex;
+        border: 1px solid var(--shell-border);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--shell-surface-inset);
+      }
+      .palette-size-switch button {
+        border: 0;
+        padding: var(--shell-space-control) var(--shell-space-panel);
+        font-size: var(--shell-font-control);
+        color: var(--shell-text);
+        background: transparent;
+        cursor: pointer;
+      }
+      .palette-size-switch button[aria-pressed='true'] {
+        background: var(--shell-accent);
+        color: var(--shell-on-accent);
+      }
+      .palette-size-switch button:focus-visible {
+        outline: 2px solid var(--shell-text-bright);
+        outline-offset: -3px;
+      }
       .fieldrow {
         display: flex;
         gap: var(--shell-space-group);
