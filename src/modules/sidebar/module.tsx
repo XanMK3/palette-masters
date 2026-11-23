@@ -209,13 +209,13 @@ function CopyCssButton({
 
 function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOptions['actions'] }) {
   const { palette, assignments } = state;
-  const roles = ROLE_KEYS.slice(0, 5);
+  const roles = ROLE_KEYS.slice(0, (palette?.colors.length ?? state.paletteSize) >= 6 ? 6 : 5);
   return (
     <div
       class="swatches"
       id="swatches"
       aria-label="Extracted artwork colors"
-      style={{ '--swatch-count': palette?.colors.length || 5 }}
+      style={{ '--swatch-count': palette?.colors.length || state.paletteSize }}
     >
       {palette
         ? palette.colors.map((hex, index) => {
@@ -257,7 +257,7 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
               </div>
             );
           })
-        : Array.from({ length: 5 }, (_, index) => (
+        : Array.from({ length: state.paletteSize }, (_, index) => (
             <div class="swatch-column" key={index}>
               <div class="swatch">
                 <div class="pigment" />
@@ -271,7 +271,7 @@ function Swatches({ state, actions }: { state: SidebarState; actions: SidebarOpt
               </select>
             </div>
           ))}
-      {palette && palette.colors.length < 5 && (
+      {palette && palette.colors.length < state.paletteSize && (
         <span class="tiny">{palette.colors.length} distinct colors found</span>
       )}
     </div>
@@ -370,12 +370,14 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
             </div>
           </div>
         </section>
-        <section class="sidebar-panel" aria-label="Extraction settings">
-          <div class="fieldrow">
+        <section class="sidebar-panel" aria-label="Settings">
+          <div class="settings-heading">Settings</div>
+          <div class="settings-row">
             <div class="field">
-              <label for="method">Extraction algorithm</label>
+              <label for="method">Algorithm</label>
               <select
                 id="method"
+                aria-label="Extraction algorithm"
                 value={state.method}
                 onChange={(event) => {
                   const method = event.currentTarget.value as SidebarState['method'];
@@ -388,6 +390,22 @@ function Sidebar({ state, sources, actions }: SidebarOptions & { state: SidebarS
                   </option>
                 ))}
               </select>
+            </div>
+            <div class="palette-size-field">
+              <span id="palette-size-label">Colors</span>
+              <div class="palette-size-switch" role="group" aria-labelledby="palette-size-label">
+                {([5, 6] as const).map((size) => (
+                  <button
+                    type="button"
+                    key={size}
+                    aria-label={`${size} colors`}
+                    aria-pressed={state.paletteSize === size}
+                    onClick={() => actions.changePaletteSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -460,6 +478,9 @@ export function mountSidebar(root: HTMLElement, options: SidebarOptions): Sideba
     changeMethod: (method, label) => {
       if (!disposed) options.actions.changeMethod(method, label);
     },
+    changePaletteSize: (size) => {
+      if (!disposed) options.actions.changePaletteSize(size);
+    },
     assignRole: (role, index) => {
       if (!disposed) options.actions.assignRole(role, index);
     },
@@ -473,7 +494,14 @@ export function mountSidebar(root: HTMLElement, options: SidebarOptions): Sideba
   const update = (state: SidebarState) => {
     if (!disposed) render(<Sidebar {...options} actions={actions} state={state} />, root);
   };
-  update({ selection: null, palette: null, assignments: null, method: DEFAULT_PRESET, error: '' });
+  update({
+    selection: null,
+    palette: null,
+    assignments: null,
+    method: DEFAULT_PRESET,
+    paletteSize: 5,
+    error: '',
+  });
   return {
     update,
     dispose() {

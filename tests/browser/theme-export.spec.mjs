@@ -162,3 +162,49 @@ test('plain CSS download and clipboard contain only the five current palette rol
     'Could not copy CSS variables. Try downloading them.',
   );
 });
+
+test('palette size switches between five and six across templates and exports', async ({
+  page,
+}) => {
+  await page.route(/^https:\/\//, (route) => route.abort());
+  await page.goto('/');
+  const dataUrl = await page.evaluate(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 120;
+    canvas.height = 20;
+    const context = canvas.getContext('2d');
+    ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF'].forEach((color, i) => {
+      context.fillStyle = color;
+      context.fillRect(i * 20, 0, 20, 20);
+    });
+    return canvas.toDataURL();
+  });
+  await loadArtworkFixture(page, Buffer.from(dataUrl.split(',')[1], 'base64'));
+  await page
+    .getByRole('combobox', { name: 'Extraction algorithm', exact: true })
+    .selectOption('octree-auto');
+  const downloadButton = page.getByRole('button', { name: 'Download theme', exact: true });
+  for (const count of [6, 5, 6]) {
+    await page.getByRole('button', { name: `${count} colors`, exact: true }).click();
+    await expect(downloadButton).toBeEnabled();
+    await expect(page.getByRole('combobox', { name: /^Role for color/ })).toHaveCount(count);
+    for (const template of ['Landing', 'Article', 'Poster']) {
+      await page.getByRole('tab', { name: template, exact: true }).click();
+      await expect(downloadButton).toBeEnabled();
+      const css = await downloadTheme(page);
+      await expect.poll(() => previewColors(page)).toEqual(colorsFromCSS(css));
+    }
+    await downloadButton.click();
+    const pending = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'CSS variables', exact: true }).click();
+    const download = await pending;
+    const css = await readFile(await download.path(), 'utf8');
+    expect(Object.keys(colorsFromCSS(css))).toHaveLength(count);
+    expect(css.includes('--color-tertiary:')).toBe(count === 6);
+    const frame = await (await page.locator('#templatePreview').elementHandle()).contentFrame();
+    const sixth = await frame.evaluate(() =>
+      document.getElementById('themeStage').style.getPropertyValue('--palette-6'),
+    );
+    expect(Boolean(sixth)).toBe(count === 6);
+  }
+});
